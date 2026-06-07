@@ -43,6 +43,12 @@ out/
 hs_err_pid*
 
 # ============================================================
+# Runtime logs (generated, not for VCS)
+# ============================================================
+logs/*.log
+logs/*.err
+
+# ============================================================
 # Claude Code local overrides (personal settings, not for team)
 # ============================================================
 .claude/settings.local.json

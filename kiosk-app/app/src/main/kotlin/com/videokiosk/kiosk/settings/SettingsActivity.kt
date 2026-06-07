@@ -21,7 +21,7 @@ class SettingsActivity : AppCompatActivity() {
         const val PREFS_NAME = "kiosk_prefs"
         const val PREF_SERVER_IP = "server_ip"
         const val PREF_SERVER_PORT = "server_port"
-        const val DEFAULT_IP = "192.168.1.100"
+        const val DEFAULT_IP = "192.168.3.235"
         const val DEFAULT_PORT = "8080"
     }
 

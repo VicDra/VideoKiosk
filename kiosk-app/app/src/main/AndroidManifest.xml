@@ -3,6 +3,8 @@
 
     <!-- Network access for WebSocket signaling and WebRTC -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Required by WebRTC NetworkMonitor — missing this causes a JNI fatal abort -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- Camera for video call -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -26,6 +28,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

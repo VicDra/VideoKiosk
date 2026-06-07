@@ -4,95 +4,125 @@ import com.videokiosk.operator.service.WebRTCService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JavaFX controller for call-view.fxml.
- * Displays local and remote video streams during an active call.
+ * Displays the remote video feed from the kiosk via WebRTC.
  */
 public class CallController {
 
-    // ---------------------------------------------------------------------------
+    private static final Logger log = LoggerFactory.getLogger(CallController.class);
+
+    // -------------------------------------------------------------------------
     // FXML bindings
-    // ---------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
-    /**
-     * Full-screen view for the remote video feed.
-     * TODO: Replace with a Canvas or ImageView if using a custom WebRTC renderer.
-     */
-    @FXML
-    private MediaView remoteVideoView;
+    @FXML private ImageView  remoteVideoView;
+    @FXML private ImageView  localVideoView;
+    @FXML private Button     endCallButton;
+    @FXML private Label      callStatusLabel;
+    @FXML private StackPane  remoteVideoPane;
+    @FXML private StackPane  localVideoPane;
 
-    /**
-     * Picture-in-picture view for the local camera feed.
-     * TODO: Replace with a Canvas or ImageView if using a custom WebRTC renderer.
-     */
-    @FXML
-    private MediaView localVideoView;
-
-    @FXML
-    private Button endCallButton;
-
-    @FXML
-    private Label callStatusLabel;
-
-    @FXML
-    private StackPane remoteVideoPane;
-
-    @FXML
-    private StackPane localVideoPane;
-
-    // ---------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Fields
-    // ---------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     private WebRTCService webRTCService;
-    private String remoteClientId;
+    private String        remoteClientId;
 
-    // ---------------------------------------------------------------------------
+    // Callback invoked when the operator explicitly ends the call
+    // (wired by MainController so the ViewModel can send end_call to kiosk)
+    private Runnable onCallEnded;
+
+    // -------------------------------------------------------------------------
     // Lifecycle
-    // ---------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @FXML
     public void initialize() {
+        log.info("CallController initializing");
         callStatusLabel.setText("Подключение...");
-
-        // TODO: attach video renderers once WebRTCService is injected
-        // TODO: update callStatusLabel when WebRTC connection is established
+        remoteVideoView.setPreserveRatio(true);
+        remoteVideoView.setFitWidth(800);
+        remoteVideoView.setFitHeight(540);
     }
 
     /**
-     * Inject dependencies after FXML is loaded.
-     * @param webRTCService  The WebRTC service managing the peer connection.
-     * @param remoteClientId The kiosk client ID for display purposes.
+     * Inject WebRTCService and remote client ID after FXML is loaded.
+     * Registers the video-frame callback so each decoded frame is shown in remoteVideoView.
      */
-    public void setup(WebRTCService webRTCService, String remoteClientId) {
-        this.webRTCService = webRTCService;
-        this.remoteClientId = remoteClientId;
-
-        callStatusLabel.setText("Звонок с: " + remoteClientId);
-
-        // TODO: webRTCService.attachLocalRenderer(localVideoPane)
-        // TODO: webRTCService.attachRemoteRenderer(remoteVideoPane)
+    /** Set the callback that fires when the operator ends the call (used to notify kiosk). */
+    public void setOnCallEnded(Runnable callback) {
+        this.onCallEnded = callback;
     }
 
-    // ---------------------------------------------------------------------------
+    public void setup(WebRTCService service, String clientId) {
+        this.webRTCService  = service;
+        this.remoteClientId = clientId;
+        log.info("CallController.setup: clientId={}", clientId);
+
+        callStatusLabel.setText("Звонок с: " + clientId);
+
+        service.setListener(new WebRTCService.WebRTCListener() {
+            @Override
+            public void onRemoteVideoFrame(WritableImage image) {
+                // Already on FX thread (Platform.runLater in WebRTCService)
+                remoteVideoView.setImage(image);
+            }
+
+            @Override
+            public void onCallConnected() {
+                log.info("WebRTC connected — call live with clientId={}", clientId);
+                callStatusLabel.setText("Звонок активен: " + clientId);
+            }
+
+            @Override
+            public void onCallEnded() {
+                log.info("WebRTC call ended");
+                callStatusLabel.setText("Звонок завершён");
+                closeWindow();
+            }
+
+            @Override
+            public void onError(String message) {
+                log.error("WebRTC error in call with {}: {}", clientId, message);
+                callStatusLabel.setText("Ошибка: " + message);
+            }
+        });
+    }
+
+    // -------------------------------------------------------------------------
     // Button handlers
-    // ---------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @FXML
     public void handleEndCall() {
+        log.info("Operator ended call with clientId={}", remoteClientId);
         if (webRTCService != null) {
             webRTCService.stopCall();
         }
+        // Notify ViewModel so it sends end_call to the kiosk via signaling
+        if (onCallEnded != null) {
+            onCallEnded.run();
+        }
+        closeWindow();
+    }
 
-        // TODO: notify ViewModel / SignalingService that call has ended
-        System.out.println("[CallController] Call ended by operator");
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
 
-        // Close call window
-        Stage stage = (Stage) endCallButton.getScene().getWindow();
-        stage.close();
+    private void closeWindow() {
+        if (endCallButton.getScene() != null) {
+            Stage stage = (Stage) endCallButton.getScene().getWindow();
+            stage.close();
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.videokiosk.kiosk.ui
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,14 +23,15 @@ import org.webrtc.SurfaceViewRenderer
  */
 class CallFragment : Fragment() {
 
+    companion object {
+        private const val TAG = "CallFragment"
+    }
+
     private val viewModel: MainViewModel by activityViewModels()
 
     private lateinit var remoteRenderer: SurfaceViewRenderer
     private lateinit var localRenderer: SurfaceViewRenderer
     private lateinit var btnEndCall: Button
-
-    // EGL context shared between local and remote renderers
-    private val rootEglBase: EglBase by lazy { EglBase.create() }
 
     // ---------------------------------------------------------------------------
     // Permission launcher
@@ -86,7 +88,6 @@ class CallFragment : Fragment() {
         // Release renderer resources to avoid memory leaks
         remoteRenderer.release()
         localRenderer.release()
-        rootEglBase.release()
     }
 
     // ---------------------------------------------------------------------------
@@ -94,18 +95,28 @@ class CallFragment : Fragment() {
     // ---------------------------------------------------------------------------
 
     private fun initRenderers() {
-        // Initialize SurfaceViewRenderers with the shared EGL context
-        remoteRenderer.init(rootEglBase.eglBaseContext, null)
+        // Use the EGL context from the WebRTC engine so renderers share the same GL context
+        // as the video capturer, enabling zero-copy texture rendering.
+        val eglContext = viewModel.getWebRTCEglContext()
+        if (eglContext == null) {
+            Log.w(TAG, "WebRTC EGL context not yet available — renderer init deferred")
+            // Retry in the next frame; the ViewModel initializes WebRTC asynchronously
+            remoteRenderer.postDelayed({ initRenderers() }, 100)
+            return
+        }
+
+        Log.i(TAG, "Initialising SurfaceViewRenderers with WebRTC EGL context")
+
+        remoteRenderer.init(eglContext, null)
         remoteRenderer.setEnableHardwareScaler(true)
         remoteRenderer.setMirror(false)
 
-        localRenderer.init(rootEglBase.eglBaseContext, null)
+        localRenderer.init(eglContext, null)
         localRenderer.setEnableHardwareScaler(true)
-        localRenderer.setMirror(true) // mirror local camera preview
+        localRenderer.setMirror(true) // mirror front-facing camera preview
 
-        // TODO: obtain WebRTCClient from ViewModel and call:
-        //   webRTCClient.attachLocalRenderer(localRenderer)
-        //   webRTCClient.attachRemoteRenderer(remoteRenderer)
-        //   webRTCClient.startLocalVideo(requireContext())
+        // Wire renderers to WebRTCClient via ViewModel
+        viewModel.attachCallRenderers(localRenderer, remoteRenderer)
+        Log.i(TAG, "SurfaceViewRenderers attached to WebRTC")
     }
 }

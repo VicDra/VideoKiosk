@@ -3,6 +3,8 @@ package com.videokiosk.operator.service;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,6 +15,8 @@ import java.net.URISyntaxException;
  * to a registered {@link SignalingListener}.
  */
 public class SignalingService {
+
+    private static final Logger log = LoggerFactory.getLogger(SignalingService.class);
 
     // ---------------------------------------------------------------------------
     // Listener interface
@@ -35,6 +39,7 @@ public class SignalingService {
 
     public SignalingService(String serverUrl) {
         this.serverUrl = serverUrl;
+        log.debug("SignalingService created, target={}", serverUrl);
     }
 
     // ---------------------------------------------------------------------------
@@ -50,53 +55,46 @@ public class SignalingService {
      */
     public void connect() {
         String url = serverUrl + "?role=operator";
+        log.info("Connecting to signaling server: {}", url);
         try {
             wsClient = new WebSocketClient(new URI(url)) {
 
                 @Override
                 public void onOpen(ServerHandshake handshakedata) {
-                    System.out.println("[SignalingService] Connected to: " + url);
-                    if (listener != null) {
-                        listener.onConnected();
-                    }
+                    log.info("Connected to signaling server (HTTP {})", handshakedata.getHttpStatus());
+                    if (listener != null) listener.onConnected();
                 }
 
                 @Override
                 public void onMessage(String raw) {
-                    System.out.println("[SignalingService] Received: " + raw);
+                    log.debug("Received: {}", raw);
                     try {
                         JSONObject msg = new JSONObject(raw);
-                        if (listener != null) {
-                            listener.onMessage(msg);
-                        }
+                        if (listener != null) listener.onMessage(msg);
                     } catch (Exception e) {
-                        System.err.println("[SignalingService] Failed to parse message: " + e.getMessage());
+                        log.error("Failed to parse message: {} — raw={}", e.getMessage(), raw);
                     }
                 }
 
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
-                    System.out.println("[SignalingService] Disconnected: " + reason);
-                    if (listener != null) {
-                        listener.onDisconnected(code, reason);
-                    }
+                    log.warn("Disconnected: code={} reason={} remote={}", code, reason, remote);
+                    if (listener != null) listener.onDisconnected(code, reason);
                 }
 
                 @Override
                 public void onError(Exception ex) {
-                    System.err.println("[SignalingService] Error: " + ex.getMessage());
-                    if (listener != null) {
-                        listener.onError(ex);
-                    }
+                    log.error("WebSocket error: {}", ex.getMessage(), ex);
+                    if (listener != null) listener.onError(ex);
                 }
             };
 
             wsClient.connectBlocking();
         } catch (URISyntaxException e) {
-            System.err.println("[SignalingService] Invalid server URL: " + serverUrl);
+            log.error("Invalid server URL '{}': {}", serverUrl, e.getMessage());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            System.err.println("[SignalingService] Connection interrupted");
+            log.warn("Connection attempt interrupted");
         }
     }
 
@@ -105,9 +103,10 @@ public class SignalingService {
      */
     public void send(JSONObject message) {
         if (wsClient != null && wsClient.isOpen()) {
+            log.debug("Sending: {}", message);
             wsClient.send(message.toString());
         } else {
-            System.err.println("[SignalingService] Cannot send — not connected");
+            log.warn("Cannot send — not connected. Message dropped: {}", message);
         }
     }
 
@@ -115,11 +114,13 @@ public class SignalingService {
      * Close the WebSocket connection.
      */
     public void disconnect() {
+        log.info("Disconnecting from signaling server");
         if (wsClient != null) {
             try {
                 wsClient.closeBlocking();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                log.warn("Disconnect interrupted");
             }
         }
     }

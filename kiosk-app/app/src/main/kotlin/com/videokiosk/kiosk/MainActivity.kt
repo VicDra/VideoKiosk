@@ -2,6 +2,7 @@ package com.videokiosk.kiosk
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -24,10 +25,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     companion object {
+        private const val TAG = "MainActivity"
         private const val PREFS_NAME = "kiosk_prefs"
         private const val PREF_SERVER_IP = "server_ip"
         private const val PREF_SERVER_PORT = "server_port"
-        private const val DEFAULT_SERVER_IP = "192.168.1.100"
+        private const val DEFAULT_SERVER_IP = "192.168.3.235"
         private const val DEFAULT_SERVER_PORT = "8080"
     }
 
@@ -37,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i(TAG, "=== VideoKiosk Kiosk App starting ===")
         setContentView(R.layout.activity_main)
 
         // Set up NavController from the NavHostFragment
@@ -49,12 +52,14 @@ class MainActivity : AppCompatActivity() {
         val serverIp = prefs.getString(PREF_SERVER_IP, DEFAULT_SERVER_IP)!!
         val serverPort = prefs.getString(PREF_SERVER_PORT, DEFAULT_SERVER_PORT)!!
         val serverUrl = "ws://$serverIp:$serverPort"
+        Log.i(TAG, "Connecting to signaling server: $serverUrl")
 
         // Initialize the ViewModel with the server URL
         viewModel.initialize(serverUrl)
 
         // Observe call state and navigate to the appropriate fragment
         observeCallState()
+        Log.i(TAG, "Activity ready — observing call state")
     }
 
     // ---------------------------------------------------------------------------
@@ -64,11 +69,12 @@ class MainActivity : AppCompatActivity() {
     private fun observeCallState() {
         lifecycleScope.launch {
             viewModel.callState.collect { state ->
+                Log.d(TAG, "CallState changed → $state")
                 when (state) {
                     is CallState.Idle -> {
-                        // Navigate back to waiting screen if not already there
                         val currentDest = navController.currentDestination?.id
                         if (currentDest != R.id.waitingFragment) {
+                            Log.i(TAG, "Navigating to WaitingFragment")
                             navController.navigate(R.id.waitingFragment)
                         }
                     }
@@ -77,6 +83,7 @@ class MainActivity : AppCompatActivity() {
                     is CallState.Queued -> {
                         val currentDest = navController.currentDestination?.id
                         if (currentDest != R.id.queueFragment) {
+                            Log.i(TAG, "Navigating to QueueFragment (state=$state)")
                             navController.navigate(R.id.queueFragment)
                         }
                     }
@@ -84,13 +91,14 @@ class MainActivity : AppCompatActivity() {
                     is CallState.InCall -> {
                         val currentDest = navController.currentDestination?.id
                         if (currentDest != R.id.callFragment) {
+                            Log.i(TAG, "Navigating to CallFragment")
                             navController.navigate(R.id.callFragment)
                         }
                     }
 
                     is CallState.Error -> {
+                        Log.e(TAG, "Error state: ${(state as CallState.Error).message}")
                         // TODO: show error dialog or Snackbar
-                        // Navigate back to waiting screen after error
                         navController.navigate(R.id.waitingFragment)
                     }
                 }
