@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/waitingFragment">
+
+    <fragment
+        android:id="@+id/waitingFragment"
+        android:name="com.videokiosk.kiosk.ui.WaitingFragment"
+        android:label="Ожидание"
+        tools:layout="@layout/fragment_waiting">
+        <action
+            android:id="@+id/action_waiting_to_queue"
+            app:destination="@id/queueFragment"
+            app:popUpTo="@id/waitingFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_waiting_to_call"
+            app:destination="@id/callFragment"
+            app:popUpTo="@id/waitingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/queueFragment"
+        android:name="com.videokiosk.kiosk.ui.QueueFragment"
+        android:label="Очередь"
+        tools:layout="@layout/fragment_queue">
+        <action
+            android:id="@+id/action_queue_to_call"
+            app:destination="@id/callFragment"
+            app:popUpTo="@id/queueFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_queue_to_waiting"
+            app:destination="@id/waitingFragment"
+            app:popUpTo="@id/waitingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/callFragment"
+        android:name="com.videokiosk.kiosk.ui.CallFragment"
+        android:label="Звонок"
+        tools:layout="@layout/fragment_call">
+        <action
+            android:id="@+id/action_call_to_waiting"
+            app:destination="@id/waitingFragment"
+            app:popUpTo="@id/waitingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+</navigation>

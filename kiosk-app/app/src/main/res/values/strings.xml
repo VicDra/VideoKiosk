@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Application name -->
+    <string name="app_name">VideoKiosk</string>
+
+    <!-- Screen titles -->
+    <string name="title_waiting">Главный экран</string>
+    <string name="title_queue">Ожидание оператора</string>
+    <string name="title_call">Видеозвонок</string>
+    <string name="title_settings">Настройки</string>
+
+    <!-- Waiting screen -->
+    <string name="btn_call_operator">Вызвать оператора</string>
+    <string name="status_ready">Готов к работе</string>
+    <string name="status_calling">Вызываем оператора…</string>
+
+    <!-- Queue screen -->
+    <string name="queue_header">Вы в очереди</string>
+    <string name="queue_position_label">Ваш номер в очереди:</string>
+    <string name="queue_estimated_minutes">Примерное ожидание: ~%d мин</string>
+    <string name="queue_connecting">Подключение…</string>
+    <string name="btn_cancel_call">Отменить вызов</string>
+
+    <!-- Call screen -->
+    <string name="btn_end_call">Завершить звонок</string>
+    <string name="call_connecting">Установка соединения…</string>
+    <string name="call_in_progress">Разговор</string>
+
+    <!-- Settings screen -->
+    <string name="label_server_ip">IP-адрес сервера</string>
+    <string name="label_server_port">Порт сервера</string>
+    <string name="hint_server_ip">например, 192.168.1.100</string>
+    <string name="hint_server_port">например, 8080</string>
+    <string name="btn_save">Сохранить</string>
+    <string name="settings_saved">Настройки сохранены</string>
+
+    <!-- Validation errors -->
+    <string name="error_ip_required">Введите IP-адрес сервера</string>
+    <string name="error_port_invalid">Введите корректный номер порта</string>
+    <string name="error_port_range">Порт должен быть от 1 до 65535</string>
+
+    <!-- Generic -->
+    <string name="action_settings">Настройки</string>
+    <string name="menu_settings">Настройки</string>
+    <string name="error_connection_lost">Потеряно соединение с сервером</string>
+    <string name="error_permission_denied">Нет доступа к камере или микрофону</string>
+
+</resources>

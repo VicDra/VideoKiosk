@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.media.MediaView?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.videokiosk.operator.ui.CallController"
+            prefWidth="800"
+            prefHeight="600"
+            style="-fx-background-color: #1a1a1a;">
+
+    <!-- Remote video — fills the entire center area -->
+    <center>
+        <StackPane fx:id="remoteVideoPane"
+                   style="-fx-background-color: #000000;">
+            <MediaView fx:id="remoteVideoView"
+                       fitWidth="800"
+                       fitHeight="540"
+                       preserveRatio="true"/>
+            <Label text="Ожидание видео..."
+                   style="-fx-text-fill: #888888; -fx-font-size: 18px;"/>
+        </StackPane>
+    </center>
+
+    <!-- Bottom toolbar: call status + end call button + local PiP -->
+    <bottom>
+        <HBox spacing="12"
+              alignment="CENTER"
+              style="-fx-background-color: #2a2a2a; -fx-padding: 10 16 10 16;">
+
+            <Label fx:id="callStatusLabel"
+                   text="Подключение..."
+                   style="-fx-text-fill: #cccccc;"/>
+
+            <Button fx:id="endCallButton"
+                    text="Завершить звонок"
+                    onAction="#handleEndCall"
+                    style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        </HBox>
+    </bottom>
+
+    <!-- Local video — picture-in-picture, bottom right corner -->
+    <right>
+        <StackPane fx:id="localVideoPane"
+                   prefWidth="200"
+                   prefHeight="150"
+                   style="-fx-background-color: #111111; -fx-border-color: #444444; -fx-border-width: 1;">
+            <MediaView fx:id="localVideoView"
+                       fitWidth="200"
+                       fitHeight="150"
+                       preserveRatio="true"/>
+            <Label text="Камера"
+                   style="-fx-text-fill: #666666;"/>
+        </StackPane>
+    </right>
+
+</BorderPane>
