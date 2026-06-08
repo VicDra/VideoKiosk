@@ -265,14 +265,32 @@ if (-not $SkipAndroid) {
     if (-not (Test-Path $ADB)) {
         Write-Warn "ADB not found at $ADB - skipping Android"
     } else {
-        $deviceLines = & $ADB devices 2>&1 | Where-Object { $_ -match "device$" }
-        if (-not $deviceLines) {
+        # Use get-serialno — more reliable than parsing "adb devices" tabular output
+        $deviceId = (& $ADB get-serialno 2>&1) | Where-Object { $_ -notmatch "daemon|error|List" } | Select-Object -First 1
+        $deviceId = "$deviceId".Trim()
+        if (-not $deviceId -or $deviceId -eq "unknown") {
             Write-Warn "No Android device connected - skipping"
         } else {
-            $deviceId = ($deviceLines[0] -split "\s+")[0]
             Write-Info "Device: $deviceId"
 
-            # Install APK
+            # ── ADB reverse tunnel ──────────────────────────────────────────
+            # Forward device port 8080 → PC localhost:8080 through ADB so the
+            # kiosk can reach the signaling server without a firewall rule.
+            $revOut = & $ADB -s $deviceId reverse tcp:$ServerPort tcp:$ServerPort 2>&1
+            Write-Ok "ADB reverse tunnel: device:$ServerPort → PC:$ServerPort ($revOut)"
+
+            # Patch kiosk SharedPreferences to use 127.0.0.1 via the tunnel
+            $PKG = "com.videokiosk.kiosk"
+            $newPrefs = "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>" +
+                        "<map>" +
+                        "<string name=`"server_ip`">127.0.0.1</string>" +
+                        "<string name=`"server_port`">$ServerPort</string>" +
+                        "</map>"
+            $shellCmd = "run-as $PKG sh -c 'cat > /data/data/$PKG/shared_prefs/kiosk_prefs.xml'"
+            $newPrefs | & $ADB -s $deviceId shell $shellCmd 2>&1 | Out-Null
+            Write-Ok "Kiosk settings → 127.0.0.1:$ServerPort (via ADB tunnel)"
+
+            # ── Install APK ─────────────────────────────────────────────────
             $apkPath = Join-Path $ROOT "kiosk-app\app\build\outputs\apk\debug\app-debug.apk"
             if (Test-Path $apkPath) {
                 $installOut = & $ADB -s $deviceId install -r $apkPath 2>&1
@@ -297,17 +315,22 @@ if (-not $SkipAndroid) {
                 Write-Warn "am start returned: $launchOut"
             }
 
-            # Start logcat capture in background
+            # Start logcat capture — write to file via redirect
             $kioskLog = $logFiles["kiosk-app"]
+            $logcatArgs = "-s $deviceId logcat -v time MainActivity:D WebRTCClient:D SignalingClient:D MainViewModel:D *:S"
             $logcatProc = Start-Process `
                 -FilePath $ADB `
-                -ArgumentList "-s $deviceId logcat -v time MainActivity:D WebRTCClient:D SignalingClient:D MainViewModel:D *:S" `
+                -ArgumentList $logcatArgs `
                 -RedirectStandardOutput $kioskLog `
                 -PassThru `
-                -WindowStyle Hidden
-
-            Write-Ok "Logcat capture started (PID $($logcatProc.Id))"
-            Write-Info "Log: $kioskLog"
+                -WindowStyle Hidden `
+                -ErrorAction SilentlyContinue
+            if ($logcatProc) {
+                Write-Ok "Logcat capture started (PID $($logcatProc.Id))"
+                Write-Info "Log: $kioskLog"
+            } else {
+                Write-Warn "Logcat capture could not start (non-critical)"
+            }
         }
     }
 }
