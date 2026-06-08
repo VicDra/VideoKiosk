@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ── Brand navy (primary) ───────────────────────────────────────────── -->
+    <color name="primary">#033D86</color>
+    <color name="primary_dk">#022A5C</color>
+    <color name="primary_md">#1A52A0</color>
+    <color name="primary_pale">#CDD8EE</color>
+
+    <!-- ── Accent orange (CTA) ────────────────────────────────────────────── -->
+    <color name="accent">#B45309</color>
+    <color name="accent_dk">#92400E</color>
+    <color name="accent_soft">#FFF3DF</color>
+
+    <!-- ── Neutral scale ──────────────────────────────────────────────────── -->
+    <color name="bg">#F9FAFB</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="txt1">#111827</color>
+    <color name="txt2">#4B5563</color>
+    <color name="txt3">#9CA3AF</color>
+    <color name="border_color">#E5E7EB</color>
+    <color name="divider">#F3F4F6</color>
+
+    <!-- ── Status ─────────────────────────────────────────────────────────── -->
+    <color name="success">#16A34A</color>
+    <color name="success_pale">#DCFCE7</color>
+    <color name="danger">#B91C1C</color>
+    <color name="danger_pale">#FEF2F2</color>
+
+    <!-- ── Video call stage ───────────────────────────────────────────────── -->
+    <color name="vc_bg_top">#11346F</color>
+    <color name="vc_bg_mid">#0A2A63</color>
+    <color name="vc_bg_bottom">#06205A</color>
+    <color name="vc_ring">#7FA4F7</color>
+    <color name="vc_ring_border">#8C7FA4F7</color>
+
+    <!-- ── Legacy / compatibility ─────────────────────────────────────────── -->
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
-    <color name="primary">#FF1976D2</color>
-    <color name="primary_dark">#FF1565C0</color>
-    <color name="accent">#FFFF5722</color>
-    <color name="call_background">#FF000000</color>
+    <color name="primary_dark">#022A5C</color>
+    <color name="call_background">#06205A</color>
     <color name="overlay_dark">#AA000000</color>
 </resources>

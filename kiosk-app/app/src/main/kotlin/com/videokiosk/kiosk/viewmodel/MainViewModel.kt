@@ -159,6 +159,20 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    /** Toggle microphone mute on the active WebRTC session. */
+    fun toggleMute() {
+        if (::webRTCClient.isInitialized) {
+            webRTCClient.toggleMute()
+        }
+    }
+
+    /** Toggle camera on/off on the active WebRTC session. */
+    fun toggleCamera() {
+        if (::webRTCClient.isInitialized) {
+            webRTCClient.toggleCamera()
+        }
+    }
+
     fun endCall() {
         Log.i(TAG, "Ending call — state=${_callState.value}")
         viewModelScope.launch {

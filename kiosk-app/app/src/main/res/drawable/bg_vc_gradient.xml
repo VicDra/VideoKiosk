@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Navy gradient background for video call screens (approximates the radial design gradient) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="270"
+        android:startColor="#11346F"
+        android:centerColor="#0A2A63"
+        android:centerX="0.45"
+        android:endColor="#06205A" />
+</shape>

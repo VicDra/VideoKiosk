@@ -294,6 +294,24 @@ class WebRTCClient {
     // Release
     // ---------------------------------------------------------------------------
 
+    /** Toggle microphone mute (enable/disable the audio track). */
+    fun toggleMute() {
+        localAudioTrack?.let { track ->
+            val muted = track.enabled()   // currently enabled → we're about to mute
+            track.setEnabled(!muted)
+            Log.i(TAG, "Microphone ${if (muted) "muted" else "unmuted"}")
+        }
+    }
+
+    /** Toggle camera on/off (enable/disable the video track). */
+    fun toggleCamera() {
+        localVideoTrack?.let { track ->
+            val active = track.enabled()
+            track.setEnabled(!active)
+            Log.i(TAG, "Camera ${if (active) "disabled" else "enabled"}")
+        }
+    }
+
     fun close() {
         Log.i(TAG, "Closing WebRTC resources")
         mainHandler.removeCallbacks(iceDisconnectRunnable)

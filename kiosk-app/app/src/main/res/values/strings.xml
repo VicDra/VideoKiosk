@@ -2,30 +2,47 @@
 <resources>
 
     <!-- Application name -->
-    <string name="app_name">VideoKiosk</string>
+    <string name="app_name">ЕИРЦ ЛО</string>
 
     <!-- Screen titles -->
-    <string name="title_waiting">Главный экран</string>
-    <string name="title_queue">Ожидание оператора</string>
-    <string name="title_call">Видеозвонок</string>
+    <string name="title_waiting">Личный кабинет ЕИРЦ ЛО</string>
+    <string name="title_waiting_sub">Видеосвязь с оператором</string>
+    <string name="title_queue">Видеосвязь с оператором</string>
+    <string name="title_queue_sub">Соединение по защищённому каналу</string>
+    <string name="title_call">Видеосвязь с оператором</string>
     <string name="title_settings">Настройки</string>
 
-    <!-- Waiting screen -->
-    <string name="btn_call_operator">Вызвать оператора</string>
+    <!-- Home / waiting screen -->
+    <string name="welcome_title">Добро\nпожаловать!</string>
+    <string name="welcome_subtitle">Связь с оператором ЕИРЦ ЛО через защищённый видеозвонок.</string>
+    <string name="welcome_hint">Оператор увидит и услышит вас. Убедитесь, что вы готовы к разговору.</string>
+    <string name="cta_call_title">Видеосвязь\nс оператором</string>
+    <string name="cta_call_subtitle">Поможем с вопросами по ЖКУ</string>
+    <string name="btn_call_operator">Видеосвязь с оператором</string>
     <string name="status_ready">Готов к работе</string>
     <string name="status_calling">Вызываем оператора…</string>
+    <string name="status_reconnecting">Переподключение…</string>
+    <string name="footer_text">АО ЕИРЦ Ленинградской области · Техподдержка: 8 800 700-57-57</string>
 
-    <!-- Queue screen -->
-    <string name="queue_header">Вы в очереди</string>
+    <!-- Queue / connecting screen -->
+    <string name="queue_header">Соединяем с оператором</string>
+    <string name="queue_subtitle">Пожалуйста, подождите. Это займёт меньше минуты.</string>
     <string name="queue_position_label">Ваш номер в очереди:</string>
     <string name="queue_estimated_minutes">Примерное ожидание: ~%d мин</string>
-    <string name="queue_connecting">Подключение…</string>
+    <string name="queue_connecting">Соединение…</string>
+    <string name="queue_wait_badge">Ожидание ответа · %s</string>
+    <string name="queue_wait_connecting">Ожидание ответа…</string>
     <string name="btn_cancel_call">Отменить вызов</string>
 
     <!-- Call screen -->
-    <string name="btn_end_call">Завершить звонок</string>
+    <string name="btn_end_call">Завершить</string>
+    <string name="call_live_label">Идёт разговор</string>
     <string name="call_connecting">Установка соединения…</string>
     <string name="call_in_progress">Разговор</string>
+    <string name="call_btn_mic">Микрофон</string>
+    <string name="call_btn_camera">Камера</string>
+    <string name="call_btn_end">Завершить</string>
+    <string name="call_self_label">Вы</string>
 
     <!-- Settings screen -->
     <string name="label_server_ip">IP-адрес сервера</string>

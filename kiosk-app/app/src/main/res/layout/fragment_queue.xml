@@ -1,82 +1,282 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<!--
+  Screen 10 — Connecting / Waiting for operator
+  Navy gradient stage with animated pulse rings, wait-badge timer,
+  self-camera PiP placeholder (bottom-right), cancel pill (bottom-centre).
+-->
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:padding="24dp">
+    android:orientation="vertical">
 
-    <!-- "Вы в очереди" header -->
+    <!-- ─── Top bar (78dp navy) ───────────────────────────────────────────── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+        android:orientation="horizontal"
+        android:background="@color/primary"
+        android:gravity="center_vertical"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp">
+
+        <!-- Back / cancel button pill -->
+        <LinearLayout
+            android:id="@+id/btn_topbar_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/shape_back_btn"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="‹ Отмена"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Title block -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_queue"
+                android:textColor="#FFFFFF"
+                android:textSize="21sp"
+                android:fontFamily="serif"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_queue_sub"
+                android:textColor="#A6FFFFFF"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ─── 2dp orange accent line ────────────────────────────────────────── -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/bg_topbar_accent" />
+
+    <!-- ─── Navy gradient stage (fills remaining height) ────────────────── -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_vc_gradient">
+
+        <!-- ── Centre waiting content ──────────────────────────────────────── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_gravity="center">
+
+            <!-- Pulse container: 168×168dp — rings animated in Fragment -->
+            <FrameLayout
+                android:layout_width="168dp"
+                android:layout_height="168dp"
+                android:layout_gravity="center_horizontal">
+
+                <!-- Ring 1 (starts at scale 0.38, animates to 1.7, alpha 0.7→0) -->
+                <View
+                    android:id="@+id/view_ring1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/shape_pulse_ring"
+                    android:scaleX="0.38"
+                    android:scaleY="0.38"
+                    android:alpha="0" />
+
+                <!-- Ring 2 (delayed 700ms) -->
+                <View
+                    android:id="@+id/view_ring2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/shape_pulse_ring"
+                    android:scaleX="0.38"
+                    android:scaleY="0.38"
+                    android:alpha="0" />
+
+                <!-- Core circle (132×132dp, centered) -->
+                <LinearLayout
+                    android:layout_width="132dp"
+                    android:layout_height="132dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/shape_vc_core"
+                    android:gravity="center"
+                    android:elevation="4dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📹"
+                        android:textSize="52sp" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- Heading -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/queue_header"
+                android:textColor="#FFFFFF"
+                android:textSize="34sp"
+                android:fontFamily="serif"
+                android:textStyle="bold"
+                android:layout_marginTop="30dp" />
+
+            <!-- Subtitle -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/queue_subtitle"
+                android:textColor="#D9EAF1FF"
+                android:textSize="19sp"
+                android:layout_marginTop="8dp" />
+
+            <!-- Wait badge (pill) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/shape_vc_badge"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="13dp"
+                android:paddingBottom="13dp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="24dp">
+
+                <!-- Orange dot -->
+                <View
+                    android:layout_width="11dp"
+                    android:layout_height="11dp"
+                    android:background="@drawable/shape_vc_core"
+                    android:backgroundTint="@color/accent" />
+
+                <!-- Wait time text (updated by QueueFragment) -->
+                <TextView
+                    android:id="@+id/tv_estimated_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/queue_wait_connecting"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="12dp" />
+            </LinearLayout>
+
+            <!-- Hidden queue-position view (kept for code compatibility) -->
+            <TextView
+                android:id="@+id/tv_queue_position"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- ── Self-camera PiP placeholder (bottom-right, 150dp from bottom) -->
+        <FrameLayout
+            android:layout_width="210dp"
+            android:layout_height="146dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="150dp"
+            android:background="@drawable/shape_pip_frame"
+            android:elevation="6dp"
+            android:clipChildren="true">
+
+            <!-- Local camera renderer (shown when WebRTC is active) -->
+            <org.webrtc.SurfaceViewRenderer
+                android:id="@+id/local_renderer_queue"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
+            <!-- Placeholder shown until camera is live -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="👤"
+                    android:textSize="44sp"
+                    android:textColor="#80FFFFFF" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/call_self_label"
+                    android:textColor="#D9FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="6dp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- ── Cancel / end call button (bottom-centre) ────────────────────── -->
+        <LinearLayout
+            android:id="@+id/btn_cancel_call"
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="40dp"
+            android:orientation="horizontal"
+            android:background="@drawable/shape_vc_cancel_btn"
+            android:paddingStart="40dp"
+            android:paddingEnd="40dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:elevation="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📵"
+                android:textSize="21sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_cancel_call"
+                android:textColor="#FFFFFF"
+                android:textSize="21sp"
+                android:fontFamily="serif"
+                android:textStyle="bold"
+                android:layout_marginStart="12dp" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- ─── Footer ─────────────────────────────────────────────────────────── -->
     <TextView
-        android:id="@+id/tv_queue_header"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/queue_header"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tv_queue_label"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintVertical_bias="0.3" />
+        android:text="@string/footer_text"
+        android:textColor="@color/txt3"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:background="@color/bg"
+        android:paddingTop="8dp"
+        android:paddingBottom="14dp" />
 
-    <!-- "Ваш номер в очереди:" label -->
-    <TextView
-        android:id="@+id/tv_queue_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/queue_position_label"
-        android:textSize="18sp"
-        android:textColor="#555555"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_queue_header"
-        app:layout_constraintBottom_toTopOf="@id/tv_queue_position" />
-
-    <!-- Large position number -->
-    <TextView
-        android:id="@+id/tv_queue_position"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textSize="96sp"
-        android:textStyle="bold"
-        android:textColor="#1565C0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_queue_label"
-        app:layout_constraintBottom_toTopOf="@id/tv_estimated_time"
-        tools:text="3" />
-
-    <!-- Estimated wait time -->
-    <TextView
-        android:id="@+id/tv_estimated_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textSize="16sp"
-        android:textColor="#888888"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_queue_position"
-        app:layout_constraintBottom_toTopOf="@id/btn_cancel_call"
-        tools:text="Примерное ожидание: ~9 минут" />
-
-    <!-- Cancel button -->
-    <Button
-        android:id="@+id/btn_cancel_call"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/btn_cancel_call"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_estimated_time" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
