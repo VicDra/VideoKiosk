@@ -97,21 +97,37 @@
         android:background="@drawable/bg_topbar_accent" />
 
     <!-- ─── Body (horizontal split, fills remaining height) ──────────────── -->
-    <LinearLayout
+    <!--
+        ConstraintLayout avoids nested LinearLayout weights (lint NestedWeights).
+        A vertical Guideline at 50% splits the space into equal left / right columns.
+    -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        android:layout_weight="1">
+
+        <!-- 50% vertical guideline -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_mid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
         <!-- ── Left column: welcome copy ──────────────────────────────────── -->
         <LinearLayout
+            android:id="@+id/col_left"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center_vertical"
             android:paddingStart="56dp"
-            android:paddingEnd="32dp">
+            android:paddingEnd="32dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_mid"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <!-- Headline -->
             <TextView
@@ -162,13 +178,17 @@
 
         <!-- ── Right column: action tile ──────────────────────────────────── -->
         <LinearLayout
+            android:id="@+id/col_right"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center_vertical"
             android:paddingStart="24dp"
-            android:paddingEnd="56dp">
+            android:paddingEnd="56dp"
+            app:layout_constraintStart_toEndOf="@+id/guideline_mid"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <!-- Primary CTA tile: Видеосвязь с оператором -->
             <LinearLayout
@@ -232,7 +252,7 @@
                     android:textSize="36sp" />
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- ─── Footer ─────────────────────────────────────────────────────────── -->
     <TextView
