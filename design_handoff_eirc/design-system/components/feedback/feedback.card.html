@@ -1,0 +1,81 @@
+<!-- @dsCard group="Components" viewport="700x470" name="Статусы, очередь, входящий вызов" subtitle="Badge · StatusPill · QueueItem · IncomingCallDialog" -->
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  body { margin: 0; padding: 24px; background: var(--bg-page); color: var(--text-strong); display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start; }
+  h4 { font: var(--type-label); color: var(--text-muted); text-transform: uppercase; letter-spacing: var(--tracking-caps); margin: 0 0 12px; }
+  .stack { display: flex; flex-direction: column; gap: 18px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  /* badge / pill */
+  .badge { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: var(--radius-pill); font: var(--type-caption); font-weight: 600; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--border); font: var(--type-label); color: var(--text-body); }
+  /* queue */
+  .qi { display: flex; align-items: center; gap: 16px; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+  .qi.active { background: var(--action-primary-soft); border-color: var(--blue-300); }
+  .qnum { width: 44px; height: 44px; border-radius: var(--radius-sm); background: var(--surface-sunken); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font: var(--type-h3); font-weight: 700; }
+  .qi.active .qnum { background: var(--blue-600); color: #fff; }
+  .qmeta { flex: 1; }
+  .qmeta .k { font: var(--type-label); font-weight: 600; }
+  .qmeta .l { font: var(--type-caption); color: var(--text-muted); }
+  .qw { font: var(--type-caption); font-weight: 600; color: var(--amber-700); }
+  .qi.active .qw { color: var(--blue-700); }
+  /* dialog */
+  .dlg { background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); border: 1px solid var(--border); overflow: hidden; }
+  .dlg .top { padding: 28px 28px 20px; text-align: center; }
+  .avatar { width: 84px; height: 84px; margin: 0 auto 16px; border-radius: var(--radius-pill); background: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center; }
+  .avatar svg { width: 40px; height: 40px; }
+  .dlg .t { font: var(--type-h2); margin-bottom: 6px; }
+  .dlg .s { font: var(--type-body-sm); color: var(--text-muted); }
+  .dlg .acts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px 28px 28px; }
+  .b { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: var(--radius-md); font: var(--type-h3); border: 1px solid transparent; }
+  .b svg { width: 20px; height: 20px; }
+  .b.sec { background: var(--surface); color: var(--text-strong); border-color: var(--border-strong); }
+  .b.acc { background: var(--action-accept); color: #fff; }
+</style></head>
+<body>
+  <div class="stack">
+    <div>
+      <h4>Badge</h4>
+      <div class="row">
+        <span class="badge" style="background:var(--tint-info-bg);color:var(--tint-info-fg)"><span class="dot" style="background:var(--blue-500)"></span>Киоск №1</span>
+        <span class="badge" style="background:var(--tint-success-bg);color:var(--tint-success-fg)"><span class="dot" style="background:var(--green-500)"></span>Онлайн</span>
+        <span class="badge" style="background:var(--tint-warning-bg);color:var(--tint-warning-fg)"><span class="dot" style="background:var(--amber-500)"></span>В очереди</span>
+        <span class="badge" style="background:var(--tint-danger-bg);color:var(--tint-danger-fg)"><span class="dot" style="background:var(--red-500)"></span>Сброшен</span>
+      </div>
+    </div>
+    <div>
+      <h4>StatusPill</h4>
+      <div class="row">
+        <span class="pill"><span class="dot" style="background:var(--status-online)"></span>На связи</span>
+        <span class="pill"><span class="dot" style="background:var(--status-waiting)"></span>Ожидание</span>
+        <span class="pill"><span class="dot" style="background:var(--status-busy)"></span>Занят</span>
+        <span class="pill"><span class="dot" style="background:var(--status-offline)"></span>Не в сети</span>
+      </div>
+    </div>
+    <div>
+      <h4>QueueItem</h4>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="qi active"><div class="qnum">1</div><div class="qmeta"><div class="k">Киоск №1</div><div class="l">Зал ожидания, 1 этаж</div></div><div class="qw">идёт разговор</div></div>
+        <div class="qi"><div class="qnum">2</div><div class="qmeta"><div class="k">Киоск №3</div><div class="l">Окно приёма показаний</div></div><div class="qw">ждёт 0:45</div></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <h4>IncomingCallDialog</h4>
+    <div class="dlg">
+      <div class="top">
+        <div class="avatar"><i data-lucide="video"></i></div>
+        <div class="t">Входящий видеозвонок</div>
+        <div class="s">Киоск №1 · Зал ожидания, 1 этаж</div>
+      </div>
+      <div class="acts">
+        <span class="b sec"><i data-lucide="phone-off"></i>Отклонить</span>
+        <span class="b acc"><i data-lucide="phone"></i>Принять</span>
+      </div>
+    </div>
+  </div>
+  <script>lucide.createIcons();</script>
+</body></html>

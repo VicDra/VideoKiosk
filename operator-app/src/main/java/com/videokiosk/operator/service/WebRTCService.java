@@ -297,12 +297,25 @@ public class WebRTCService {
 
     private RTCConfiguration buildConfig() {
         RTCConfiguration config = new RTCConfiguration();
+
+        // STUN — gathers reflexive candidates; also works as a fallback on open networks
         RTCIceServer stun = new RTCIceServer();
         stun.urls = List.of(
                 "stun:stun.l.google.com:19302",
                 "stun:stun1.l.google.com:19302"
         );
-        config.iceServers = List.of(stun);
+
+        // Local TCP TURN relay — local-turn-server.js running on this PC.
+        // Kiosk connects via ADB reverse tunnel (tcp:3478→tcp:3478), operator connects
+        // directly. Both reach the same relay on 127.0.0.1:3478.
+        // WinHTTP always bypasses the system proxy for loopback, so Hiddify won't
+        // interfere even when the proxy is enabled.
+        RTCIceServer turn = new RTCIceServer();
+        turn.urls = List.of("turn:127.0.0.1:3478?transport=tcp");
+        turn.username = "user";
+        turn.password = "password";
+
+        config.iceServers = List.of(stun, turn);
         return config;
     }
 

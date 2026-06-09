@@ -1,0 +1,91 @@
+<!-- @dsCard group="Оператор" viewport="1280x800" -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ИРЦ Оператор — приём вызовов</title>
+<link rel="stylesheet" href="../../design-system/styles.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--bg-page); overflow: hidden; }
+  #root { height: 100vh; }
+  @keyframes op-ring { 0% { transform: scale(1); opacity: .6 } 100% { transform: scale(1.4); opacity: 0 } }
+  @media (prefers-reduced-motion: reduce) { [style*="op-ring"] { animation: none !important } }
+  .op-demobar { position: fixed; bottom: 16px; left: 16px; display: flex; gap: 8px; z-index: 100; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 6px; box-shadow: var(--shadow-md); }
+  .op-demobar button { border: none; background: transparent; padding: 8px 16px; border-radius: var(--radius-pill); font: var(--type-caption); font-weight: 600; color: var(--text-muted); cursor: pointer; }
+  .op-demobar button.on { background: var(--blue-600); color: #fff; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="OperatorShell.jsx" type="text/babel" data-presets="react"></script>
+<script src="OperatorViews.jsx" type="text/babel" data-presets="react"></script>
+<script type="text/babel" data-presets="react">
+// Глобальные функции из OperatorShell.jsx / OperatorViews.jsx используются напрямую.
+const QUEUE = [
+  { id: 'k1', kiosk: 'Киоск №1', location: 'Зал ожидания, 1 этаж', waiting: 'ждёт 0:20' },
+  { id: 'k3', kiosk: 'Киоск №3', location: 'Окно приёма показаний', waiting: 'ждёт 0:48' },
+  { id: 'k2', kiosk: 'Киоск №2', location: 'Зона самообслуживания', waiting: 'ждёт 1:15' },
+];
+
+function App() {
+  // mode: waiting | incoming | incall — можно задать через ?mode=
+  const initMode = (() => { try { return new URLSearchParams(location.search).get('mode') || 'incoming'; } catch(e){ return 'incoming'; } })();
+  const [mode, setMode] = React.useState(initMode);
+  const [settings, setSettings] = React.useState(false);
+  const [elapsed, setElapsed] = React.useState(0);
+  const [queue, setQueue] = React.useState(QUEUE);
+  const [activeId, setActiveId] = React.useState(null);
+
+  React.useEffect(() => {
+    if (mode === 'incall') {
+      setElapsed(0);
+      const t = setInterval(() => setElapsed(e => e + 1), 1000);
+      return () => clearInterval(t);
+    }
+  }, [mode]);
+
+  React.useEffect(() => { if (window.lucide) window.lucide.createIcons(); });
+
+  const caller = queue[0] || { kiosk: 'Киоск №1', location: 'Зал ожидания, 1 этаж' };
+  const status = mode === 'incall' ? 'busy' : mode === 'incoming' ? 'waiting' : 'online';
+
+  const accept = () => { setActiveId(caller.id); setMode('incall'); };
+  const reject = () => { setQueue(q => q.slice(1)); setMode(queue.length > 1 ? 'incoming' : 'waiting'); };
+  const end = () => { setQueue(q => q.filter(x => x.id !== activeId)); setActiveId(null); setMode(queue.length > 1 ? 'incoming' : 'waiting'); };
+
+  const { OperatorTopBar, QueueSidebar } = window.OperatorShared;
+  const { WaitingView, InCallView, IncomingOverlay, SettingsOverlay } = window.OperatorViews;
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <OperatorTopBar status={status} onSettings={() => setSettings(true)} />
+      <div style={{ flex: 1, display: 'flex', minHeight: 0, position: 'relative' }}>
+        <QueueSidebar queue={queue} activeId={activeId} onPick={() => {}} />
+        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
+          {mode === 'incall'
+            ? <InCallView caller={caller} elapsed={elapsed} onEnd={end} />
+            : <WaitingView />}
+          {mode === 'incoming' && <IncomingOverlay caller={caller} count={queue.length - 1} onAccept={accept} onReject={reject} />}
+          {settings && <SettingsOverlay onClose={() => setSettings(false)} />}
+        </main>
+      </div>
+      {/* Демо-переключатель состояний (только для предпросмотра кита) */}
+      <div className="op-demobar">
+        <button className={mode === 'waiting' ? 'on' : ''} onClick={() => { setMode('waiting'); setActiveId(null); }}>Ожидание</button>
+        <button className={mode === 'incoming' ? 'on' : ''} onClick={() => { setQueue(QUEUE); setMode('incoming'); }}>Входящий</button>
+        <button className={mode === 'incall' ? 'on' : ''} onClick={() => { setActiveId(QUEUE[0].id); setQueue(QUEUE); setMode('incall'); }}>Разговор</button>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Оператор — ЕИРЦ ЛО</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest" defer></script>
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   ДИЗАЙН-ТОКЕНЫ — ЕИРЦ ЛО Brand Design System
+   ══════════════════════════════════════════════════════════════════ */
+:root {
+  /* Navy — структура */
+  --primary:      #033D86;
+  --primary-dk:   #022A5C;
+  --primary-md:   #1A52A0;
+  --primary-pale: #CDD8EE;
+  --primary-dim:  rgba(3,61,134,.10);
+
+  /* Orange — CTA */
+  --accent:       #B45309;
+  --accent-dk:    #92400E;
+  --accent-soft:  #FFF3DF;
+
+  /* Neutral */
+  --bg:           #F9FAFB;
+  --surface:      #FFFFFF;
+  --txt1:         #111827;
+  --txt2:         #4B5563;
+  --txt3:         #9CA3AF;
+  --border:       #E5E7EB;
+  --divider:      #F3F4F6;
+
+  /* Semantic */
+  --success:      #16A34A;
+  --success-pale: #DCFCE7;
+  --success-txt:  #166534;
+  --danger:       #B91C1C;
+  --danger-pale:  #FEF2F2;
+
+  /* Шрифты */
+  --font-serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+  --font-sans:  'Open Sans', -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Кольцо фокуса */
+  --focus-ring: 0 0 0 4px rgba(180, 83, 9, .32);
+
+  /* Тени */
+  --shadow-xs: 0 1px 4px rgba(17,24,39,.06);
+  --shadow-sm: 0 2px 6px rgba(17,24,39,.07);
+  --shadow-md: 0 6px 20px rgba(17,24,39,.09);
+  --shadow-lg: 0 14px 40px rgba(17,24,39,.13);
+  --shadow-brand: 0 10px 28px rgba(180,83,9,.30);
+
+  /* Радиусы */
+  --radius-xs:   6px;
+  --radius-sm:   10px;
+  --radius-md:   14px;
+  --radius-chip: 12px;
+  --radius-lg:   20px;
+  --radius-xl:   24px;
+  --radius-pill: 999px;
+
+  /* Отступы (база 4px) */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-7: 32px; --space-8: 40px;
+  --space-9: 48px;
+
+  /* Анимации */
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Тач-цели */
+  --hit-desktop: 44px;
+
+  /* Алиасы совместимости */
+  --text-strong:       var(--txt1);
+  --text-body:         var(--txt2);
+  --text-muted:        var(--txt3);
+  --text-on-dark:      #EAF1FF;
+  --surface-muted:     var(--bg);
+  --surface-sunken:    var(--divider);
+  --border-strong:     #D1D6DF;
+  --bg-page:           var(--bg);
+  --bg-page-blue:      var(--primary-dk);
+  --action-primary:    var(--accent);
+  --action-primary-soft: var(--accent-soft);
+  --action-accept:     var(--success);
+  --action-danger:     var(--danger);
+  --status-online:     var(--success);
+  --status-busy:       var(--danger);
+  --status-waiting:    var(--accent);
+  --blue-50:  #EAF1FB;
+  --blue-300: #6E92CB;
+  --blue-500: var(--primary);
+  --blue-600: var(--primary);
+  --amber-400: #DC9830;             /* активные бордеры очереди */
+  --amber-700: var(--accent-dk);
+  --shadow-danger: 0 8px 22px rgba(185,28,28,.35);
+  --shadow-accept: 0 8px 22px rgba(22,163,74,.30);
+  --tint-success-bg: var(--success-pale);
+  --tint-success-fg: var(--success-txt);
+  --tint-danger-bg:  var(--danger-pale);
+  --tint-danger-fg:  var(--danger);
+}
+
+/* ── Reset ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--txt1);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+h1, h2, h3 { font-family: var(--font-serif); color: var(--txt1); }
+
+button { font-family: var(--font-sans); }
+
+:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* ══════════════════════════════════════════════════════════════════
+   ВЕРХНЯя ПАНЕЛЬ (TopBar)
+   ══════════════════════════════════════════════════════════════════ */
+.op-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  min-height: 64px;
+}
+
+.op-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.op-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.op-topbar-title {
+  font: 700 18px/1 var(--font-serif);
+  color: var(--txt1);
+}
+
+.op-topbar-sub {
+  font-size: 12px;
+  color: var(--txt3);
+  margin-top: 2px;
+}
+
+.op-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Статус-пилюля (WS-соединение) */
+.op-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--txt2);
+  white-space: nowrap;
+}
+
+/* Индикатор подключения (управляется из JS) */
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--danger);
+  flex-shrink: 0;
+  transition: background var(--dur-base);
+}
+.dot.ok   { background: var(--success); }
+.dot.warn { background: var(--accent); }
+
+#wsStatus { font-size: 13px; font-weight: 600; }
+
+/* Аватар оператора */
+.op-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 15px/1 var(--font-sans);
+  flex-shrink: 0;
+}
+
+.op-operator-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--txt1);
+}
+
+.op-operator-role {
+  font-size: 12px;
+  color: var(--txt3);
+  margin-top: 1px;
+}
+
+/* Кнопка-иконка настроек */
+.op-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--txt2);
+  transition: background var(--dur-fast);
+}
+.op-icon-btn:hover { background: var(--bg); }
+
+/* ══════════════════════════════════════════════════════════════════
+   ОСНОВНАЯ РАСКЛАДКА
+   ══════════════════════════════════════════════════════════════════ */
+.op-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   САЙДБАР — ОЧЕРЕДЬ
+   ══════════════════════════════════════════════════════════════════ */
+.op-sidebar {
+  width: 340px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.op-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.op-sidebar-header h2 {
+  font: 700 20px/1.2 var(--font-serif);
+  color: var(--txt1);
+}
+
+/* Счётчик очереди — navy-пилюля */
+.op-queue-count {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Список вызовов */
+.call-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.call-list:empty::after {
+  content: 'Новые вызовы появятся здесь';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-9) var(--space-4);
+  font-size: 13px;
+  color: var(--txt3);
+  text-align: center;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  min-height: 120px;
+}
+
+/* Элемент очереди */
+.call-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-fast);
+}
+.call-item:hover {
+  background: var(--bg);
+  border-color: var(--border-strong);
+}
+.call-item.active {
+  background: var(--accent-soft);
+  border-color: var(--amber-400);
+  box-shadow: var(--shadow-xs);
+}
+
+.call-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-pale);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+.call-item.active .call-icon {
+  background: var(--primary);
+  color: #fff;
+}
+
+.call-meta { flex: 1; min-width: 0; }
+
+.call-id {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--txt1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.call-item.active .call-id { color: var(--primary); }
+
+.call-time {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--txt3);
+  margin-top: 2px;
+}
+.call-item.active .call-time { color: var(--accent-dk); }
+
+/* Скроллбар сайдбара */
+.call-list::-webkit-scrollbar { width: 4px; }
+.call-list::-webkit-scrollbar-track { background: transparent; }
+.call-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   ГЛАВНАЯ РАБОЧАЯ ОБЛАСТЬ
+   ══════════════════════════════════════════════════════════════════ */
+.op-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Экран ожидания ─────────────────────────────────────────────── */
+.op-idle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  padding: var(--space-9);
+  text-align: center;
+}
+
+.op-idle-icon {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--blue-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.op-idle h1 {
+  font: 900 30px/1.15 var(--font-serif);
+  color: var(--txt1);
+  margin-bottom: var(--space-3);
+}
+
+.op-idle p {
+  font-size: 15px;
+  color: var(--txt3);
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+.op-conn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--txt2);
+}
+
+/* ── Панель звонка ──────────────────────────────────────────────── */
+.op-call-panel {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: var(--space-6);
+  gap: var(--space-5);
+}
+.op-call-panel.visible { display: flex; }
+
+.op-call-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.op-caller-info h2 {
+  font: 700 24px/1.2 var(--font-serif);
+  color: var(--txt1);
+}
+
+.op-caller-info p {
+  font-size: 13px;
+  color: var(--txt3);
+  margin-top: 3px;
+}
+
+.op-call-controls-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* ICE-статус (классы .connected / .failed управляются из JS) */
+#iceStatus {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--txt3);
+  transition: background var(--dur-base), color var(--dur-base);
+}
+#iceStatus.connected {
+  background: var(--tint-success-bg);
+  color: var(--tint-success-fg);
+  border-color: transparent;
+}
+#iceStatus.failed {
+  background: var(--tint-danger-bg);
+  color: var(--tint-danger-fg);
+  border-color: transparent;
+}
+
+/* Кнопка завершить звонок */
+.op-btn-end {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--hit-desktop);
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-pill);
+  background: var(--danger);
+  border: none;
+  color: #fff;
+  font: 700 14px/1 var(--font-sans);
+  cursor: pointer;
+  box-shadow: var(--shadow-danger);
+  transition: opacity var(--dur-fast), transform var(--dur-fast);
+}
+.op-btn-end:hover  { opacity: .88; }
+.op-btn-end:active { transform: scale(.97) translateY(1px); }
+
+/* Видеообёртка (navy) */
+.op-video-wrap {
+  position: relative;
+  flex: 1;
+  border-radius: var(--radius-xl);
+  background: radial-gradient(120% 90% at 50% 0%, #11346F, #0A2A63 60%, #06205A);
+  overflow: hidden;
+  min-height: 300px;
+}
+
+#remoteVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* PiP — своя камера */
+#localVideo {
+  position: absolute;
+  top: var(--space-5);
+  right: var(--space-5);
+  width: 180px;
+  aspect-ratio: 4/3;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  display: block;
+  border: 2px solid rgba(255,255,255,.25);
+  background: linear-gradient(150deg,#1B3A6B,#0A2A63);
+  box-shadow: var(--shadow-lg);
+  z-index: 2;
+}
+
+/* Оверлей «ожидание видео» */
+.op-video-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: rgba(255,255,255,.55);
+  background: transparent;
+  transition: opacity var(--dur-slow);
+}
+.op-video-overlay.hidden { opacity: 0; pointer-events: none; }
+
+/* ══════════════════════════════════════════════════════════════════
+   ОВЕРЛЕЙ ВХОДЯЩЕГО ВЫЗОВА
+   ══════════════════════════════════════════════════════════════════ */
+@keyframes op-ring {
+  0%   { transform: scale(1);   opacity: .6 }
+  100% { transform: scale(1.4); opacity: 0  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .op-inc-ring { animation: none !important; }
+}
+
+.op-incoming-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 61, 134, .42);
+  backdrop-filter: blur(4px);
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.op-incoming-overlay.visible { display: flex; }
+
+.op-incoming-dialog {
+  width: min(440px, 92vw);
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  animation: op-dialog-in var(--dur-base) var(--ease-out) both;
+}
+@keyframes op-dialog-in {
+  from { transform: scale(.94) translateY(8px); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+.op-incoming-top {
+  padding: var(--space-8) var(--space-8) var(--space-6);
+  text-align: center;
+}
+
+/* Аватар с пульсирующими кольцами */
+.op-incoming-avatar {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto var(--space-5);
+  border-radius: 50%;
+  background: var(--blue-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+}
+
+.op-inc-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid var(--blue-300);
+  animation: op-ring 1.8s var(--ease-out) infinite;
+}
+
+.op-incoming-title {
+  font: 700 23px/1.25 var(--font-serif);
+  color: var(--txt1);
+  margin-bottom: var(--space-2);
+}
+
+.op-incoming-caller {
+  font-size: 15px;
+  color: var(--txt2);
+}
+
+.op-incoming-sub {
+  font-size: 13px;
+  color: var(--txt3);
+  margin-top: 2px;
+}
+
+.op-incoming-more {
+  margin-top: var(--space-4);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-dk);
+  min-height: 1em;
+}
+
+/* Кнопки «Отклонить» / «Принять» */
+.op-incoming-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-8) var(--space-8);
+}
+
+.op-btn-reject,
+.op-btn-accept {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 56px;
+  border-radius: var(--radius-md);
+  font: 700 17px/1 var(--font-serif);
+  cursor: pointer;
+  transition: opacity var(--dur-fast), transform var(--dur-fast), box-shadow var(--dur-fast);
+}
+.op-btn-reject:active,
+.op-btn-accept:active { transform: scale(.97) translateY(1px); }
+.op-btn-reject:disabled,
+.op-btn-accept:disabled { opacity: .4; cursor: not-allowed; }
+:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Отклонить — outline */
+.op-btn-reject {
+  background: var(--surface);
+  border: 1.5px solid var(--border-strong);
+  color: var(--txt1);
+}
+.op-btn-reject:hover:not(:disabled) { background: var(--bg); }
+
+/* Принять — зелёный success */
+.op-btn-accept {
+  background: var(--success);
+  border: none;
+  color: #fff;
+  box-shadow: var(--shadow-accept);
+}
+.op-btn-accept:hover:not(:disabled) { opacity: .9; }
+
+/* Статус оператора в шапке */
+.op-readiness-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--success-pale);
+  color: var(--success-txt);
+  font-size: 12px;
+  font-weight: 600;
+  transition: background var(--dur-base), color var(--dur-base);
+}
+.op-readiness-pill.busy {
+  background: var(--danger-pale);
+  color: var(--danger);
+}
+.op-readiness-pill .dot {
+  width: 8px;
+  height: 8px;
+}
+
+/* Таймер звонка */
+.op-call-timer {
+  display: none;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 7px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--tint-success-bg);
+  color: var(--tint-success-fg);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.op-call-timer.visible { display: inline-flex; }
+
+/* Video overlay — flex row for icon + text */
+.op-video-overlay {
+  display: flex;
+  align-items: center;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   DEBUG-ПАНЕЛЬ (генерируется JS, position:fixed — не трогать)
+   ══════════════════════════════════════════════════════════════════ */
+</style>
+</head>
+<body>
+
+<!-- ══ TopBar ═══════════════════════════════════════════════════════ -->
+<header class="op-topbar">
+  <div class="op-topbar-left">
+    <img src="design-system/assets/logo-irc.svg" class="op-logo" width="38" height="38" alt="ЕИРЦ ЛО">
+    <div>
+      <div class="op-topbar-title">ИРЦ · Оператор</div>
+      <div class="op-topbar-sub">Рабочее место приёма вызовов</div>
+    </div>
+  </div>
+  <div class="op-topbar-right">
+    <span class="op-status-pill">
+      <span class="dot" id="dot"></span>
+      <span id="wsStatus">Подключение…</span>
+    </span>
+    <span class="op-readiness-pill" id="opReadiness">
+      <span class="dot ok"></span>
+      <span id="opReadinessText">Готова принимать</span>
+    </span>
+    <div class="op-avatar">АП</div>
+    <div>
+      <div class="op-operator-name">Анна Петрова</div>
+      <div class="op-operator-role">Оператор · смена 1</div>
+    </div>
+    <button class="op-icon-btn" aria-label="Настройки">
+      <i data-lucide="settings" style="width:20px;height:20px"></i>
+    </button>
+  </div>
+</header>
+
+<!-- ══ Layout ═══════════════════════════════════════════════════════ -->
+<div class="op-layout">
+
+  <!-- Sidebar: очередь вызовов -->
+  <aside class="op-sidebar">
+    <div class="op-sidebar-header">
+      <h2>Очередь вызовов</h2>
+      <span class="op-queue-count" id="queueCount">0</span>
+    </div>
+    <div class="call-list" id="callList"></div>
+  </aside>
+
+  <!-- Main: idle / call / incoming overlay -->
+  <main class="op-main">
+
+    <!-- Экран ожидания -->
+    <div class="op-idle" id="idleMsg">
+      <span class="op-idle-icon">
+        <i data-lucide="headset" style="width:56px;height:56px;color:var(--primary)"></i>
+      </span>
+      <div>
+        <h1>Ожидание вызовов</h1>
+        <p>Вы подключены к сигнальному серверу.<br>Когда клиент начнёт видеозвонок, здесь появится уведомление.</p>
+      </div>
+      <span class="op-conn-badge">
+        <span class="dot ok"></span>
+        Соединение с сервером активно
+      </span>
+    </div>
+
+    <!-- Панель активного звонка -->
+    <div class="op-call-panel" id="callPanel">
+      <div class="op-call-header">
+        <div class="op-caller-info">
+          <h2>Звонок: <span id="activeKioskId">—</span></h2>
+        </div>
+        <div class="op-call-controls-top">
+          <span class="op-call-timer" id="callTimer">
+            <span class="dot ok"></span>
+            <span>Идёт разговор · </span><span id="callElapsed">00:00</span>
+          </span>
+          <span id="iceStatus">Соединение…</span>
+          <button class="op-btn-end" onclick="endCall()">
+            <i data-lucide="phone-off" style="width:18px;height:18px"></i>
+            Завершить
+          </button>
+        </div>
+      </div>
+      <div class="op-video-wrap">
+        <video id="remoteVideo" autoplay playsinline></video>
+        <video id="localVideo" autoplay playsinline muted></video>
+        <div class="op-video-overlay" id="videoOverlay">
+          <i data-lucide="loader-2" style="width:18px;height:18px;margin-right:6px;flex-shrink:0"></i>
+          Ожидание видео…
+        </div>
+      </div>
+    </div>
+
+    <!-- Оверлей входящего вызова -->
+    <div class="op-incoming-overlay" id="incomingOverlay">
+      <div class="op-incoming-dialog">
+        <div class="op-incoming-top">
+          <div class="op-incoming-avatar">
+            <i data-lucide="video" style="width:44px;height:44px"></i>
+            <span class="op-inc-ring"></span>
+            <span class="op-inc-ring" style="animation-delay:.7s"></span>
+          </div>
+          <div class="op-incoming-title">Входящий видеозвонок</div>
+          <div class="op-incoming-caller" id="incomingCallerId">—</div>
+          <div class="op-incoming-more" id="incomingMore"></div>
+        </div>
+        <div class="op-incoming-actions">
+          <button class="op-btn-reject" id="btnReject" onclick="rejectSelected()">
+            <i data-lucide="phone-off" style="width:20px;height:20px"></i>
+            Отклонить
+          </button>
+          <button class="op-btn-accept" id="btnAccept" onclick="acceptSelected()">
+            <i data-lucide="phone" style="width:20px;height:20px"></i>
+            Принять
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+'use strict';
+
+// ── Debug log ─────────────────────────────────────────────────────────────────
+const _dbgEl = (() => {
+  const el = document.createElement('div');
+  el.id = 'dbg';
+  Object.assign(el.style, {
+    position:'fixed', bottom:'0', right:'0', width:'420px', maxHeight:'180px',
+    overflowY:'auto', background:'rgba(0,0,0,.82)', color:'#7dd3fc',
+    fontSize:'11px', fontFamily:'monospace', padding:'6px 8px', zIndex:'9999',
+    borderTop:'1px solid #1e3a5f', borderLeft:'1px solid #1e3a5f',
+    lineHeight:'1.6',
+  });
+  document.body.appendChild(el);
+  return el;
+})();
+function dbg(msg) {
+  const t = new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit',fractionalSecondDigits:1});
+  _dbgEl.innerHTML += `<div>[${t}] ${escHtml(String(msg))}</div>`;
+  _dbgEl.scrollTop = _dbgEl.scrollHeight;
+  console.log('[DBG]', msg);
+}
+
+// ── ICE config ────────────────────────────────────────────────────────────────
+const ICE_SERVERS = [
+  { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] },
+  {
+    urls:       `turn:${location.hostname}:3478?transport=tcp`,
+    username:   'user',
+    credential: 'password',
+  },
+];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+/** @type {Map<string, {el: HTMLElement, time: string}>} */
+const queue     = new Map();
+let selectedId  = null;
+let activeId    = null;
+/** @type {RTCPeerConnection|null} */
+let pc          = null;
+/** @type {MediaStream|null} */
+let localStream = null;
+/** @type {WebSocket|null} */
+let ws          = null;
+/** @type {number|null} */
+let offerTimeoutTimer = null;
+/** @type {number|null} */
+let callTimerInterval = null;
+let callStartTime = 0;
+
+// ── WebSocket ─────────────────────────────────────────────────────────────────
+const WS_URL = `ws://${location.host}?role=operator`;
+
+function wsConnect() {
+  ws = new WebSocket(WS_URL);
+
+  ws.onopen = () => {
+    setDot('ok', 'Подключён');
+    if (activeId || pc) teardown(true);
+  };
+  ws.onclose = () => {
+    setDot('', 'Переподключение…');
+    setTimeout(wsConnect, 2500);
+  };
+  ws.onerror = () => setDot('warn', 'Ошибка WebSocket');
+  ws.onmessage = ({ data }) => {
+    let msg; try { msg = JSON.parse(data); } catch { return; }
+    onMessage(msg);
+  };
+}
+
+function send(obj) {
+  if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify(obj));
+}
+
+function setDot(cls, text) {
+  const d = document.getElementById('dot');
+  d.className = 'dot' + (cls ? ' ' + cls : '');
+  document.getElementById('wsStatus').textContent = text;
+}
+
+function setOperatorStatus(busy) {
+  const pill = document.getElementById('opReadiness');
+  const txt  = document.getElementById('opReadinessText');
+  const dot  = pill.querySelector('.dot');
+  if (busy) {
+    pill.classList.add('busy');
+    dot.className  = 'dot';
+    txt.textContent = 'В разговоре';
+  } else {
+    pill.classList.remove('busy');
+    dot.className  = 'dot ok';
+    txt.textContent = 'Готова принимать';
+  }
+}
+
+function startCallTimer() {
+  callStartTime = Date.now();
+  const timerEl   = document.getElementById('callTimer');
+  const elapsedEl = document.getElementById('callElapsed');
+  timerEl.classList.add('visible');
+  callTimerInterval = setInterval(() => {
+    const sec = Math.floor((Date.now() - callStartTime) / 1000);
+    const mm  = String(Math.floor(sec / 60)).padStart(2, '0');
+    const ss  = String(sec % 60).padStart(2, '0');
+    elapsedEl.textContent = `${mm}:${ss}`;
+  }, 1000);
+}
+
+function stopCallTimer() {
+  if (callTimerInterval) { clearInterval(callTimerInterval); callTimerInterval = null; }
+  const timerEl = document.getElementById('callTimer');
+  timerEl.classList.remove('visible');
+  document.getElementById('callElapsed').textContent = '00:00';
+}
+
+// ── Incoming messages ─────────────────────────────────────────────────────────
+function onMessage(msg) {
+  switch (msg.type) {
+    case 'incoming_call':
+      queueAdd(msg.clientId);
+      break;
+
+    case 'offer':
+      if (msg.clientId === activeId) handleOffer(msg.sdp);
+      break;
+
+    case 'ice_candidate':
+      if (msg.clientId === activeId && msg.ice && pc) {
+        pc.addIceCandidate(new RTCIceCandidate(msg.ice)).catch(() => {});
+      }
+      break;
+
+    case 'end_call':
+      if (msg.clientId === activeId) teardown(false);
+      queueRemove(msg.clientId);
+      break;
+
+    case 'queued':
+      break;
+  }
+}
+
+// ── Queue UI ──────────────────────────────────────────────────────────────────
+function queueAdd(id) {
+  if (queue.has(id)) return;
+
+  const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const el   = document.createElement('div');
+  el.className = 'call-item';
+  el.innerHTML = `
+    <div class="call-icon"><i data-lucide="video" style="width:18px;height:18px"></i></div>
+    <div class="call-meta">
+      <div class="call-id">${escHtml(id)}</div>
+      <div class="call-time">${time}</div>
+    </div>`;
+  el.addEventListener('click', () => queueSelect(id));
+  document.getElementById('callList').appendChild(el);
+  if (window.lucide) window.lucide.createIcons();
+
+  queue.set(id, { el, time });
+  updateQueueCount();
+  if (!selectedId) queueSelect(id);
+
+  document.title = `(${queue.size}) Оператор — ЕИРЦ ЛО`;
+}
+
+function queueRemove(id) {
+  const entry = queue.get(id);
+  if (!entry) return;
+  entry.el.remove();
+  queue.delete(id);
+  updateQueueCount();
+
+  if (selectedId === id) {
+    selectedId = null;
+    const first = queue.keys().next().value;
+    if (first) queueSelect(first); else { refreshButtons(); refreshOverlay(); }
+  }
+
+  document.title = queue.size > 0
+    ? `(${queue.size}) Оператор — ЕИРЦ ЛО`
+    : 'Оператор — ЕИРЦ ЛО';
+}
+
+function queueSelect(id) {
+  document.querySelectorAll('.call-item').forEach(e => e.classList.remove('active'));
+  selectedId = id;
+  const entry = queue.get(id);
+  if (entry) entry.el.classList.add('active');
+  refreshButtons();
+  refreshOverlay();
+}
+
+function refreshButtons() {
+  document.getElementById('btnAccept').disabled = !selectedId || !!activeId;
+  document.getElementById('btnReject').disabled = !selectedId;
+}
+
+function updateQueueCount() {
+  document.getElementById('queueCount').textContent = queue.size;
+}
+
+// ── Incoming overlay ──────────────────────────────────────────────────────────
+function refreshOverlay() {
+  const overlay = document.getElementById('incomingOverlay');
+  // Show overlay only when there's a selected call and no active call
+  if (selectedId && !activeId) {
+    document.getElementById('incomingCallerId').textContent = selectedId;
+    const remaining = queue.size - 1;
+    document.getElementById('incomingMore').textContent =
+      remaining > 0 ? `Ещё ${remaining} в очереди` : '';
+    overlay.classList.add('visible');
+  } else {
+    overlay.classList.remove('visible');
+  }
+}
+
+// ── Accept / Reject / End ─────────────────────────────────────────────────────
+async function acceptSelected() {
+  if (!selectedId || activeId) return;
+  dbg(`Accepting call from ${selectedId}`);
+  activeId = selectedId;
+
+  // Hide overlay immediately
+  document.getElementById('incomingOverlay').classList.remove('visible');
+
+  document.getElementById('activeKioskId').textContent = activeId;
+  document.getElementById('idleMsg').style.display  = 'none';
+  document.getElementById('callPanel').classList.add('visible');
+  setIceStatus('connecting', 'Соединение…');
+  setOperatorStatus(true);
+  startCallTimer();
+
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    document.getElementById('localVideo').srcObject = localStream;
+    dbg(`Local stream ready: ${localStream.getTracks().map(t => t.kind).join(', ')}`);
+  } catch (err) {
+    dbg(`getUserMedia failed: ${err.message} — no outgoing video`);
+    localStream = null;
+  }
+
+  createPC();
+
+  if (localStream) {
+    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+    dbg(`Added ${localStream.getTracks().length} local track(s) to PC`);
+  }
+
+  queueRemove(activeId);
+
+  send({ type: 'accept', clientId: activeId });
+  refreshButtons();
+
+  offerTimeoutTimer = setTimeout(() => {
+    offerTimeoutTimer = null;
+    if (!activeId) return;
+    dbg('Нет оффера от кiоска за 8с — приложение в фоне?');
+    setIceStatus('failed', 'Киоск не отвечает');
+    document.getElementById('videoOverlay').textContent = 'Кiоск не отвечает — откройте приложение на устройстве';
+    setTimeout(() => { if (activeId) endCall(); }, 4000);
+  }, 8000);
+}
+
+function rejectSelected() {
+  if (!selectedId) return;
+  if (selectedId === activeId) { endCall(); return; }
+  send({ type: 'reject', clientId: selectedId });
+  queueRemove(selectedId);
+}
+
+function endCall() {
+  if (!activeId) return;
+  send({ type: 'end_call', clientId: activeId, target: 'client' });
+  teardown(true);
+}
+
+function teardown(showIdle) {
+  if (offerTimeoutTimer) { clearTimeout(offerTimeoutTimer); offerTimeoutTimer = null; }
+  stopCallTimer();
+  setOperatorStatus(false);
+  document.getElementById('incomingOverlay').classList.remove('visible');
+
+  if (localStream) {
+    localStream.getTracks().forEach(t => t.stop());
+    localStream = null;
+    const lv = document.getElementById('localVideo');
+    lv.srcObject = null;
+  }
+  if (pc) { pc.close(); pc = null; }
+  const vid = document.getElementById('remoteVideo');
+  vid.pause();
+  vid.srcObject = null;
+  vid.load();
+  const ov = document.getElementById('videoOverlay');
+  ov.classList.remove('hidden');
+  ov.innerHTML = '<i data-lucide="loader-2" style="width:18px;height:18px;margin-right:6px;flex-shrink:0"></i>Ожидание видео…';
+  if (window.lucide) window.lucide.createIcons({ nodes: [ov] });
+
+  const panel = document.getElementById('callPanel');
+
+  if (showIdle) {
+    panel.classList.remove('visible');
+    document.getElementById('idleMsg').style.display = '';
+    if (activeId) queueRemove(activeId);
+  } else {
+    setIceStatus('failed', 'Завершён');
+    setTimeout(() => {
+      panel.classList.remove('visible');
+      document.getElementById('idleMsg').style.display = '';
+    }, 2000);
+  }
+
+  activeId = null;
+  refreshButtons();
+  refreshOverlay();
+}
+
+// ── WebRTC ────────────────────────────────────────────────────────────────────
+function createPC() {
+  pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+
+  pc.onicecandidate = ({ candidate }) => {
+    if (!candidate) { dbg('ICE gathering complete'); return; }
+    const _p = candidate.candidate.split(' '); dbg(`ICE cand: ${_p[4]}:${_p[5]} typ ${_p[7]} ${_p[8]||''}`.trim());
+    send({
+      type:     'ice_candidate',
+      target:   'client',
+      clientId: activeId,
+      ice: {
+        sdpMid:        candidate.sdpMid,
+        sdpMLineIndex: candidate.sdpMLineIndex,
+        candidate:     candidate.candidate,
+      },
+    });
+  };
+
+  pc.onconnectionstatechange = () => {
+    const s = pc?.connectionState;
+    if (!s) return;
+    dbg(`connectionState → ${s}`);
+    if (s === 'connected')    setIceStatus('connected',   '🟢 Подключён');
+    else if (s === 'failed')  { setIceStatus('failed', '🔴 Ошибка соединения'); teardown(false); }
+    else if (s === 'disconnected') setIceStatus('', '🟡 Разрыв…');
+    else if (s === 'closed')  { /* handled by teardown */ }
+  };
+
+  pc.oniceconnectionstatechange = () => {
+    dbg(`iceConnectionState → ${pc?.iceConnectionState}`);
+  };
+
+  pc.onsignalingstatechange = () => {
+    dbg(`signalingState → ${pc?.signalingState}`);
+  };
+
+  pc.onicecandidateerror = (e) => {
+    dbg(`ICE error ${e.errorCode}: ${e.errorText} @ ${e.url}`);
+  };
+
+  pc.ontrack = ({ streams, track }) => {
+    dbg(`ontrack kind=${track.kind} streams=${streams.length} readyState=${track.readyState}`);
+    if (track.kind !== 'video') return;
+    const vid = document.getElementById('remoteVideo');
+    const stream = streams[0] ?? new MediaStream([track]);
+    vid.srcObject = stream;
+    dbg(`srcObject set, stream active=${stream.active} tracks=${stream.getTracks().length}`);
+    vid.onloadedmetadata = () => {
+      dbg(`onloadedmetadata: ${vid.videoWidth}×${vid.videoHeight}`);
+      document.getElementById('videoOverlay').classList.add('hidden');
+    };
+    vid.play().catch(e => dbg(`play() failed: ${e.message}`));
+  };
+}
+
+async function handleOffer(sdp) {
+  if (!pc) return;
+  if (offerTimeoutTimer) { clearTimeout(offerTimeoutTimer); offerTimeoutTimer = null; }
+  dbg('handleOffer: setRemoteDescription...');
+  try {
+    await pc.setRemoteDescription({ type: 'offer', sdp });
+    dbg('setRemoteDescription OK, createAnswer...');
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    dbg('answer set, sending to kiosk');
+    send({
+      type:     'answer',
+      sdp:      answer.sdp,
+      target:   'client',
+      clientId: activeId,
+    });
+  } catch (err) {
+    console.error('handleOffer error', err);
+    setIceStatus('failed', '⚠ Ошибка WebRTC');
+  }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function setIceStatus(cls, text) {
+  const el = document.getElementById('iceStatus');
+  el.className = cls;
+  el.textContent = text;
+}
+
+function escHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+// Lucide is loaded with `defer` so window.lucide is undefined at parse time.
+// createIcons() is called once DOMContentLoaded fires (after deferred scripts run).
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.lucide) window.lucide.createIcons();
+});
+wsConnect();
+dbg(`UI loaded. TURN → turn:${location.hostname}:3478`);
+</script>
+</body>
+</html>

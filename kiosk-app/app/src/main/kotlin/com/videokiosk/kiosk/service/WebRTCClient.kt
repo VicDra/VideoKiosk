@@ -315,6 +315,13 @@ class WebRTCClient {
     fun close() {
         Log.i(TAG, "Closing WebRTC resources")
         mainHandler.removeCallbacks(iceDisconnectRunnable)
+
+        // Detach renderers from tracks BEFORE releasing them to avoid
+        // "EglRenderer: Dropping frame - Not initialized or already released"
+        // that fires when the camera delivers frames after the renderer is gone.
+        localRenderer?.let  { localVideoTrack?.removeSink(it);  localRenderer  = null }
+        remoteRenderer?.let { remoteVideoTrack?.removeSink(it); remoteRenderer = null }
+
         try { videoCapturer?.stopCapture() } catch (e: InterruptedException) {
             Log.w(TAG, "stopCapture interrupted: ${e.message}")
         }

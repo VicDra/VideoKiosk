@@ -1,0 +1,61 @@
+<!-- @dsCard group="Components" viewport="700x440" name="Кнопки и плитки" subtitle="Button · TileButton · CallButton — состояния" -->
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  body { margin: 0; padding: 24px; background: var(--surface); color: var(--text-strong); }
+  .sec { margin-bottom: 22px; }
+  .sec > h4 { font: var(--type-label); color: var(--text-muted); text-transform: uppercase; letter-spacing: var(--tracking-caps); margin-bottom: 12px; }
+  .row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); height: 44px; padding: 0 var(--space-5); border-radius: var(--radius-md); font: var(--type-label); border: 1px solid transparent; box-shadow: var(--shadow-xs); }
+  .btn svg { width: 18px; height: 18px; }
+  .primary { background: var(--action-primary); color: #fff; }
+  .accept { background: var(--action-accept); color: #fff; }
+  .danger { background: var(--action-danger); color: #fff; }
+  .secondary { background: var(--surface); color: var(--text-strong); border-color: var(--border-strong); }
+  .ghost { background: transparent; color: var(--action-primary); box-shadow: none; }
+  .disabled { background: var(--gray-200); color: var(--gray-400); border-color: var(--border); box-shadow: none; }
+  .tile { width: 220px; min-height: 150px; padding: var(--space-6); background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: var(--space-4); text-align: left; }
+  .tile .ico { width: 64px; height: 64px; border-radius: var(--radius-md); background: var(--blue-600); color: #fff; display: flex; align-items: center; justify-content: center; }
+  .tile.green .ico { background: var(--green-500); }
+  .tile .ico svg { width: 32px; height: 32px; }
+  .tile .tt { font: var(--weight-bold) 22px/1.1 var(--font-display); color: var(--text-strong); }
+  .tile .ts { font: var(--type-body-sm); color: var(--text-muted); }
+  .calls { display: flex; gap: 22px; align-items: center; background: var(--bg-page-blue); border-radius: var(--radius-lg); padding: 22px; }
+  .call { width: 72px; height: 72px; border-radius: var(--radius-pill); display: flex; align-items: center; justify-content: center; color: #fff; }
+  .call svg { width: 28px; height: 28px; }
+  .call.neutral { background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.25); }
+  .call.accept { background: var(--action-accept); }
+  .call.end { background: var(--action-danger); }
+</style></head>
+<body>
+  <div class="sec">
+    <h4>Button</h4>
+    <div class="row">
+      <span class="btn primary">Сохранить</span>
+      <span class="btn accept"><i data-lucide="phone"></i>Принять</span>
+      <span class="btn danger"><i data-lucide="phone-off"></i>Завершить</span>
+      <span class="btn secondary">Отмена</span>
+      <span class="btn ghost">Назад</span>
+      <span class="btn disabled">Недоступно</span>
+    </div>
+  </div>
+  <div class="sec">
+    <h4>TileButton (киоск)</h4>
+    <div class="row">
+      <div class="tile"><div class="ico"><i data-lucide="info"></i></div><div class="tt">Информация об ИРЦ</div><div class="ts">Адрес, часы работы, контакты</div></div>
+      <div class="tile green"><div class="ico"><i data-lucide="video"></i></div><div class="tt">Видеозвонок оператору</div><div class="ts">Связь со специалистом</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <h4>CallButton</h4>
+    <div class="calls">
+      <div class="call neutral"><i data-lucide="mic"></i></div>
+      <div class="call neutral"><i data-lucide="video"></i></div>
+      <div class="call accept"><i data-lucide="phone"></i></div>
+      <div class="call end"><i data-lucide="phone-off"></i></div>
+    </div>
+  </div>
+  <script>lucide.createIcons();</script>
+</body></html>

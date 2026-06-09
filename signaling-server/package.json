@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "dotenv": "^16.0.0",
+    "node-turn": "^0.0.6",
     "winston": "^3.19.0",
     "ws": "^8.14.0"
   },
