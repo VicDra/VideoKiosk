@@ -1,0 +1,56 @@
+/* ============================================================
+   ТИПОГРАФИКА — Brand DS (ЕИРЦ ЛО / CountersReader)
+   Merriweather — заголовки (serif). Open Sans — текст/кнопки.
+   Роли названы по бренду (Display/Heading/Body/Label).
+   ============================================================ */
+:root {
+  --font-serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+  --font-sans:  'Open Sans', -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-serif);
+
+  /* Веса */
+  --weight-regular: 400;
+  --weight-medium:  600;
+  --weight-semibold:600;
+  --weight-bold:    700;
+  --weight-extra:   900;
+
+  /* ── Размеры (px) ───────────────────────────────────────── */
+  --text-2xs: 11px;
+  --text-xs:  12px;
+  --text-sm:  13px;
+  --text-md:  15px;   /* базовый body */
+  --text-lg:  17px;
+  --text-xl:  20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --text-4xl: 38px;
+  --text-5xl: 48px;
+
+  /* ── Роли бренда (по фирменному файлу) ──────────────────── */
+  /* Заголовки — Merriweather */
+  --type-display:  var(--weight-extra) var(--text-4xl)/1.18 var(--font-serif);  /* DisplayLarge · h1 экрана (Black 900) */
+  --type-h1:       var(--weight-extra) var(--text-3xl)/1.15 var(--font-serif);  /* 30px Black */
+  --type-h2:       var(--weight-bold)  var(--text-2xl)/1.2  var(--font-serif);  /* HeadingLarge · TopBar 24px Bold */
+  --type-h3:       var(--weight-bold)  var(--text-xl)/1.25  var(--font-serif);  /* HeadingMedium · карточка 20px Bold */
+
+  /* Текст и подписи — Open Sans */
+  --type-body:     var(--weight-regular) var(--text-md)/1.5  var(--font-sans);  /* BodyLarge 15px */
+  --type-body-sm:  var(--weight-regular) var(--text-sm)/1.5  var(--font-sans);  /* 13px */
+  --type-label:    var(--weight-semibold)var(--text-md)/1.3  var(--font-sans);  /* LabelLarge · кнопки 15px SemiBold */
+  --type-label-sm: var(--weight-semibold)var(--text-xs)/1.3  var(--font-sans);  /* LabelSmall · подписи 12px (ALL CAPS) */
+  --type-caption:  var(--weight-regular) var(--text-xs)/1.4  var(--font-sans);
+
+  /* ── Крупная шкала для тач-киоска (большие экраны) ──────── */
+  --type-kiosk-hero:  var(--weight-extra) var(--text-5xl)/1.1  var(--font-serif);
+  --type-kiosk-title: var(--weight-extra) var(--text-4xl)/1.15 var(--font-serif);
+  --type-kiosk-tile:  var(--weight-bold)  var(--text-2xl)/1.1  var(--font-serif);
+  --type-kiosk-lead:  var(--weight-regular) var(--text-xl)/1.4 var(--font-sans);
+  --type-kiosk-body:  var(--weight-regular) var(--text-lg)/1.55 var(--font-sans);
+
+  /* ── Межбуквенные интервалы ─────────────────────────────── */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-caps: 0.08em;   /* для ALL CAPS подписей */
+}

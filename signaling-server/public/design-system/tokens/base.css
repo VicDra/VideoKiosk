@@ -1,0 +1,28 @@
+/* ============================================================
+   БАЗОВЫЕ СТИЛИ ЭЛЕМЕНТОВ — Brand DS (ЕИРЦ ЛО)
+   Лёгкий сброс + базовая типографика. Подключается из styles.css.
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font: var(--type-body);
+  color: var(--txt1);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 { color: var(--txt1); margin: 0; font-family: var(--font-serif); text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+
+a { color: var(--text-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button { font-family: inherit; cursor: pointer; }
+
+:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+::selection { background: var(--accent-soft); color: var(--accent-dk); }

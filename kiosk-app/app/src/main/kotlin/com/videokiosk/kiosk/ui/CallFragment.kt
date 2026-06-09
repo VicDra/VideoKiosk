@@ -3,11 +3,13 @@ package com.videokiosk.kiosk.ui
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -16,10 +18,23 @@ import com.videokiosk.kiosk.R
 import com.videokiosk.kiosk.viewmodel.MainViewModel
 import org.webrtc.EglBase
 import org.webrtc.SurfaceViewRenderer
+import java.util.Locale
 
 /**
- * Active call screen showing local and remote video streams.
- * Manages [SurfaceViewRenderer] lifecycle and attaches them to [WebRTCClient].
+ * Active call screen (Screen 11).
+ * Full-screen remote video + PiP local preview (top-right, 210×146dp).
+ * Live-badge + elapsed timer overlay at top.
+ * Controls: mic toggle · camera toggle · end call (96dp red circle) at bottom.
+ *
+ * View IDs:
+ *   remote_renderer    — full-screen SurfaceViewRenderer for operator video
+ *   local_renderer     — PiP SurfaceViewRenderer for local camera
+ *   local_pip_container— FrameLayout wrapper (clip-to-outline rounded)
+ *   tv_call_live_label — "Идёт разговор" badge label
+ *   tv_call_timer      — "MM:SS" elapsed time counter
+ *   btn_mute           — microphone toggle (LinearLayout)
+ *   btn_camera         — camera toggle (LinearLayout)
+ *   btn_end_call       — end call (LinearLayout, 96dp red circle)
  */
 class CallFragment : Fragment() {
 
@@ -31,7 +46,19 @@ class CallFragment : Fragment() {
 
     private lateinit var remoteRenderer: SurfaceViewRenderer
     private lateinit var localRenderer: SurfaceViewRenderer
-    private lateinit var btnEndCall: Button
+    private lateinit var btnEndCall: View
+    private lateinit var tvCallTimer: TextView
+
+    // Call-timer state
+    private val timerHandler = Handler(Looper.getMainLooper())
+    private var callSeconds = 0
+    private val timerRunnable = object : Runnable {
+        override fun run() {
+            callSeconds++
+            tvCallTimer.text = formatSeconds(callSeconds)
+            timerHandler.postDelayed(this, 1_000L)
+        }
+    }
 
     // ---------------------------------------------------------------------------
     // Permission launcher
@@ -40,11 +67,9 @@ class CallFragment : Fragment() {
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { results ->
-        val allGranted = results.values.all { it }
-        if (allGranted) {
+        if (results.values.all { it }) {
             initRenderers()
         } else {
-            // TODO: show explanation and navigate back
             viewModel.endCall()
         }
     }
@@ -64,19 +89,32 @@ class CallFragment : Fragment() {
 
         remoteRenderer = view.findViewById(R.id.remote_renderer)
         localRenderer = view.findViewById(R.id.local_renderer)
+        tvCallTimer = view.findViewById(R.id.tv_call_timer)
         btnEndCall = view.findViewById(R.id.btn_end_call)
 
-        btnEndCall.setOnClickListener {
-            viewModel.endCall()
+        // Clip local PiP to rounded corners (outline from shape_pip_frame background)
+        view.findViewById<View>(R.id.local_pip_container).let { pip ->
+            pip.clipToOutline = true
         }
 
-        // Check permissions before initializing renderers
+        // Controls
+        btnEndCall.setOnClickListener { viewModel.endCall() }
+        view.findViewById<View>(R.id.btn_mute).setOnClickListener {
+            viewModel.toggleMute()
+        }
+        view.findViewById<View>(R.id.btn_camera).setOnClickListener {
+            viewModel.toggleCamera()
+        }
+
+        // Start elapsed timer
+        callSeconds = 0
+        timerHandler.postDelayed(timerRunnable, 1_000L)
+
+        // Camera + mic permissions
         val requiredPermissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-        val allGranted = requiredPermissions.all {
-            ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
-        }
-
-        if (allGranted) {
+        if (requiredPermissions.all {
+                ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
+            }) {
             initRenderers()
         } else {
             permissionLauncher.launch(requiredPermissions)
@@ -85,7 +123,7 @@ class CallFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Release renderer resources to avoid memory leaks
+        timerHandler.removeCallbacks(timerRunnable)
         remoteRenderer.release()
         localRenderer.release()
     }
@@ -95,17 +133,14 @@ class CallFragment : Fragment() {
     // ---------------------------------------------------------------------------
 
     private fun initRenderers() {
-        // Use the EGL context from the WebRTC engine so renderers share the same GL context
-        // as the video capturer, enabling zero-copy texture rendering.
         val eglContext = viewModel.getWebRTCEglContext()
         if (eglContext == null) {
-            Log.w(TAG, "WebRTC EGL context not yet available — renderer init deferred")
-            // Retry in the next frame; the ViewModel initializes WebRTC asynchronously
+            Log.w(TAG, "WebRTC EGL context not yet available — retrying in 100ms")
             remoteRenderer.postDelayed({ initRenderers() }, 100)
             return
         }
 
-        Log.i(TAG, "Initialising SurfaceViewRenderers with WebRTC EGL context")
+        Log.i(TAG, "Initialising SurfaceViewRenderers")
 
         remoteRenderer.init(eglContext, null)
         remoteRenderer.setEnableHardwareScaler(true)
@@ -113,10 +148,19 @@ class CallFragment : Fragment() {
 
         localRenderer.init(eglContext, null)
         localRenderer.setEnableHardwareScaler(true)
-        localRenderer.setMirror(true) // mirror front-facing camera preview
+        localRenderer.setMirror(true)
 
-        // Wire renderers to WebRTCClient via ViewModel
         viewModel.attachCallRenderers(localRenderer, remoteRenderer)
         Log.i(TAG, "SurfaceViewRenderers attached to WebRTC")
+    }
+
+    // ---------------------------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------------------------
+
+    private fun formatSeconds(total: Int): String {
+        val m = total / 60
+        val s = total % 60
+        return String.format(Locale.ROOT, "%02d:%02d", m, s)
     }
 }

@@ -1,54 +1,268 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<!--
+  Screen 1 — Idle / Home
+  ЕИРЦ ЛО brand chrome (topbar + accent line) + horizontal body split:
+    left  → welcome copy + hint chip
+    right → primary CTA tile ("Видеосвязь с оператором")
+-->
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:orientation="vertical"
+    android:background="@color/bg">
 
-    <!-- App title / kiosk identifier -->
+    <!-- ─── Top bar (78dp navy) ───────────────────────────────────────────── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+        android:orientation="horizontal"
+        android:background="@color/primary"
+        android:gravity="center_vertical"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp">
+
+        <!-- Logo badge (44×44dp, 10dp rounded, 18% white) -->
+        <LinearLayout
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/shape_logo_bg"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Е"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Title block -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_waiting"
+                android:textColor="#FFFFFF"
+                android:textSize="21sp"
+                android:fontFamily="serif"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_waiting_sub"
+                android:textColor="#A6FFFFFF"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- Status badge — also used by WaitingFragment to show call state -->
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/status_ready"
+            android:textColor="#D9FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:background="@drawable/shape_topbar_status_bg"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp" />
+
+        <!-- Settings gear -->
+        <TextView
+            android:id="@+id/btn_settings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="⚙"
+            android:textColor="#CCFFFFFF"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <!-- ─── 2dp orange gradient accent line ──────────────────────────────── -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/bg_topbar_accent" />
+
+    <!-- ─── Body (horizontal split, fills remaining height) ──────────────── -->
+    <!--
+        ConstraintLayout avoids nested LinearLayout weights (lint NestedWeights).
+        A vertical Guideline at 50% splits the space into equal left / right columns.
+    -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- 50% vertical guideline -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_mid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <!-- ── Left column: welcome copy ──────────────────────────────────── -->
+        <LinearLayout
+            android:id="@+id/col_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:paddingStart="56dp"
+            android:paddingEnd="32dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_mid"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Headline -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_title"
+                android:textColor="@color/primary"
+                android:textSize="38sp"
+                android:fontFamily="serif"
+                android:textStyle="bold"
+                android:lineSpacingMultiplier="1.18" />
+
+            <!-- Subtitle -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_subtitle"
+                android:textColor="@color/txt2"
+                android:textSize="19sp"
+                android:lineSpacingMultiplier="1.6"
+                android:layout_marginTop="20dp" />
+
+            <!-- Hint chip -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/shape_hint_chip"
+                android:padding="16dp"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="👁"
+                    android:textSize="28sp" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/welcome_hint"
+                    android:textColor="@color/accent_dk"
+                    android:textSize="16sp"
+                    android:lineSpacingMultiplier="1.5"
+                    android:layout_marginStart="14dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ── Right column: action tile ──────────────────────────────────── -->
+        <LinearLayout
+            android:id="@+id/col_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:paddingStart="24dp"
+            android:paddingEnd="56dp"
+            app:layout_constraintStart_toEndOf="@+id/guideline_mid"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Primary CTA tile: Видеосвязь с оператором -->
+            <LinearLayout
+                android:id="@+id/btn_call_operator"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:orientation="horizontal"
+                android:background="@drawable/shape_cta_tile"
+                android:paddingStart="36dp"
+                android:paddingEnd="36dp"
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:elevation="2dp">
+
+                <!-- Icon box (72×72dp, 18dp rounded, 18% white) -->
+                <LinearLayout
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="@drawable/shape_icon_box"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📹"
+                        android:textSize="36sp" />
+                </LinearLayout>
+
+                <!-- Text block -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="28dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cta_call_title"
+                        android:textColor="#FFFFFF"
+                        android:textSize="25sp"
+                        android:fontFamily="serif"
+                        android:textStyle="bold"
+                        android:lineSpacingMultiplier="1.1" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cta_call_subtitle"
+                        android:textColor="#BFFFFFFF"
+                        android:textSize="16sp"
+                        android:layout_marginTop="6dp" />
+                </LinearLayout>
+
+                <!-- Arrow chevron -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#66FFFFFF"
+                    android:textSize="36sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- ─── Footer ─────────────────────────────────────────────────────────── -->
     <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/btn_call_operator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintVertical_bias="0.35" />
+        android:text="@string/footer_text"
+        android:textColor="@color/txt3"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:paddingTop="8dp"
+        android:paddingBottom="14dp" />
 
-    <!-- Main call button — large, centered -->
-    <Button
-        android:id="@+id/btn_call_operator"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:layout_width="280dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="48dp"
-        android:text="@string/btn_call_operator"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/tv_status"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
-
-    <!-- Status message below the button -->
-    <TextView
-        android:id="@+id/tv_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/status_ready"
-        android:textColor="#888888"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_call_operator"
-        tools:text="Готов к работе" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

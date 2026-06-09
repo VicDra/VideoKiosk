@@ -32,7 +32,8 @@ public class MainViewModel {
     private final BooleanProperty inCall = new SimpleBooleanProperty(false);
 
     private SignalingService signalingService;
-    private WebRTCService   webRTCService;
+    // volatile ensures cross-thread visibility (FX thread writes, WS thread reads)
+    private volatile WebRTCService webRTCService;
 
     // Callback fired when WebRTC state changes (for CallController to hook)
     private WebRTCService.WebRTCListener webRTCListener;
@@ -64,7 +65,20 @@ public class MainViewModel {
         inCall.set(true);
         incomingCalls.remove(call);
 
-        // Send accept via signaling
+        // ── Create WebRTCService BEFORE sending accept ──────────────────────────
+        // The PeerConnectionFactory constructor loads native WebRTC (~300 ms).
+        // If we sent accept first, the kiosk would reply with an SDP offer within
+        // ~150 ms — before the factory is ready — causing a second WebRTCService
+        // instance to be created in onSignalingMessage and the call window's
+        // listener to be wired to the wrong instance.  Creating first guarantees
+        // the service is ready to handle the offer when it arrives.
+        webRTCService = new WebRTCService();
+        if (webRTCListener != null) {
+            webRTCService.setListener(webRTCListener);
+        }
+        log.info("WebRTCService created, waiting for SDP offer from kiosk");
+
+        // Send accept only after WebRTC stack is initialised
         if (signalingService != null) {
             JSONObject msg = new JSONObject();
             msg.put("type", "accept");
@@ -74,13 +88,6 @@ public class MainViewModel {
         } else {
             log.warn("acceptCall — signalingService is null, cannot send");
         }
-
-        // Create WebRTCService now (waits for offer from kiosk)
-        webRTCService = new WebRTCService();
-        if (webRTCListener != null) {
-            webRTCService.setListener(webRTCListener);
-        }
-        log.info("WebRTCService created, waiting for SDP offer from kiosk");
     }
 
     public void rejectCall(KioskCall call) {
@@ -142,12 +149,19 @@ public class MainViewModel {
                 String clientId = message.optString("clientId");
                 log.info("SDP offer from clientId={} (length={})", clientId, sdp.length());
 
+                // webRTCService is non-null in normal flow (acceptCall creates it before
+                // sending "accept"). Double-checked lock is a safety net only.
                 if (webRTCService == null) {
-                    log.warn("Received offer but WebRTCService not ready — creating now");
-                    webRTCService = new WebRTCService();
-                    if (webRTCListener != null) webRTCService.setListener(webRTCListener);
+                    synchronized (this) {
+                        if (webRTCService == null) {
+                            log.warn("Received offer but WebRTCService not ready — creating fallback");
+                            WebRTCService fallback = new WebRTCService();
+                            if (webRTCListener != null) fallback.setListener(webRTCListener);
+                            webRTCService = fallback;
+                        }
+                    }
                 }
-                // handleOffer runs blocking native code — use background thread
+                // Capture reference once — handleOffer runs blocking native code
                 final WebRTCService svc = webRTCService;
                 final SignalingService sig = signalingService;
                 Thread t = new Thread(() -> svc.handleOffer(sdp, clientId, sig), "webrtc-offer");

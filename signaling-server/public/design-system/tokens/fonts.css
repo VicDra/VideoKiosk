@@ -1,0 +1,7 @@
+/* ============================================================
+   Шрифты — Brand DS (ЕИРЦ ЛО / CountersReader)
+   Merriweather — заголовки (serif, Bold/Black)
+   Open Sans   — текст, подписи, кнопки
+   Для продакшена (офлайн-киоск) шрифты следует захостить локально.
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap');

@@ -1,44 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Call screen layout.
-    - remote_renderer: full-screen WebRTC SurfaceViewRenderer for operator video
-    - local_renderer:  small PiP in bottom-right corner for local camera preview
-    - btn_end_call:    overlaid button to terminate the call
+  Screen 11 — Active video call
+  Full-screen remote video, live-badge + timer overlay top,
+  local PiP top-right (210×146dp), three control buttons bottom-centre.
+  No topbar — call occupies the entire display.
 -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000">
+    android:background="@drawable/bg_vc_gradient">
 
-    <!-- Remote video — full screen -->
+    <!-- ── Remote video (full screen, rendered by WebRTC) ─────────────────── -->
     <org.webrtc.SurfaceViewRenderer
         android:id="@+id/remote_renderer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Local video — picture-in-picture, bottom right -->
-    <org.webrtc.SurfaceViewRenderer
-        android:id="@+id/local_renderer"
-        android:layout_width="140dp"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="80dp"
-        android:elevation="4dp" />
+    <!-- ── Top overlay: live badge (left) + call timer (right) ───────────── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="top"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:paddingTop="24dp"
+        android:gravity="center_vertical">
 
-    <!-- End call button — bottom center, overlaid on video -->
-    <Button
-        android:id="@+id/btn_end_call"
-        style="@style/Widget.MaterialComponents.Button"
+        <!-- Live badge -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/shape_live_badge"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:gravity="center_vertical">
+
+            <!-- Green dot -->
+            <View
+                android:layout_width="11dp"
+                android:layout_height="11dp"
+                android:background="@drawable/shape_vc_core"
+                android:backgroundTint="@color/success" />
+
+            <TextView
+                android:id="@+id/tv_call_live_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/call_live_label"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginStart="9dp" />
+        </LinearLayout>
+
+        <!-- Spacer -->
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <!-- Call timer -->
+        <TextView
+            android:id="@+id/tv_call_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- ── Local camera PiP (top-right, 210×146dp) ────────────────────────── -->
+    <FrameLayout
+        android:id="@+id/local_pip_container"
+        android:layout_width="210dp"
+        android:layout_height="146dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/shape_pip_frame"
+        android:elevation="8dp"
+        android:clipChildren="true">
+
+        <org.webrtc.SurfaceViewRenderer
+            android:id="@+id/local_renderer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- "Вы" label -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/call_self_label"
+            android:textColor="#D9FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <!-- ── Bottom controls: mic · camera · end ───────────────────────────── -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="#F44336"
-        android:text="@string/btn_end_call"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:elevation="8dp" />
+        android:layout_marginBottom="40dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Mute / mic toggle -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginEnd="28dp">
+
+            <LinearLayout
+                android:id="@+id/btn_mute"
+                android:layout_width="84dp"
+                android:layout_height="84dp"
+                android:background="@drawable/shape_circle_ctrl"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🎙"
+                    android:textSize="32sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/call_btn_mic"
+                android:textColor="#EAF1FF"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp" />
+        </LinearLayout>
+
+        <!-- Camera toggle -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginEnd="28dp">
+
+            <LinearLayout
+                android:id="@+id/btn_camera"
+                android:layout_width="84dp"
+                android:layout_height="84dp"
+                android:background="@drawable/shape_circle_ctrl"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📷"
+                    android:textSize="32sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/call_btn_camera"
+                android:textColor="#EAF1FF"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp" />
+        </LinearLayout>
+
+        <!-- End call (96dp, red) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <LinearLayout
+                android:id="@+id/btn_end_call"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:background="@drawable/shape_circle_end"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:elevation="4dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📵"
+                    android:textSize="36sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/call_btn_end"
+                android:textColor="#EAF1FF"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp" />
+        </LinearLayout>
+    </LinearLayout>
 
 </FrameLayout>

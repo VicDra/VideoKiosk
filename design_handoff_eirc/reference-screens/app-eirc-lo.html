@@ -1,0 +1,1818 @@
+<!-- @dsCard group="UI-кит · CountersReader" name="Экраны передачи показаний" subtitle="Фирменный поток ЕИРЦ ЛО · 9 экранов + токены" viewport="1504x900" -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CountersReader — Дизайн экранов (Brand DS)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Design Tokens ────────────────────────────────────────────────────────── */
+:root {
+  /* Brand navy */
+  --primary:       #033D86;
+  --primary-dk:    #022A5C;
+  --primary-md:    #1A52A0;
+  --primary-pale:  #CDD8EE;
+  --primary-dim:   rgba(3,61,134,.10);
+
+  /* Accent orange (CTA) */
+  --accent:        #B45309;
+  --accent-dk:     #92400E;
+  --accent-soft:   #FFF3DF;
+
+  /* Neutral scale */
+  --bg:            #F9FAFB;
+  --surface:       #FFFFFF;
+  --txt1:          #111827;
+  --txt2:          #4B5563;
+  --txt3:          #9CA3AF;
+  --border:        #E5E7EB;
+  --divider:       #F3F4F6;
+
+  /* Semantic */
+  --success:       #16A34A;
+  --success-pale:  #DCFCE7;
+  --success-txt:   #166534;
+  --danger:        #B91C1C;
+  --danger-pale:   #FEF2F2;
+  --warn-pale:     #FFFBEB;
+  --warn-txt:      #92400E;
+
+  /* Meter types */
+  --cold:  #2A78B0; --cold-bg:  #DBEEF8;
+  --hot:   #C0402A; --hot-bg:   #FDE8E4;
+  --elec:  #B45309; --elec-bg:  #FDF5DC;
+  --gas:   #2E7D32; --gas-bg:   #E8F5E9;
+
+  /* Misc */
+  --vk:    #4C7CF4;
+  --purple:#7C3AED;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Open Sans', -apple-system, 'Segoe UI', sans-serif;
+  background: #1A2535;
+  color: var(--txt1);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────────────────────── */
+#sidebar {
+  width: 224px; flex-shrink: 0;
+  background: #0F172A;
+  color: #CBD5E1;
+  padding: 20px 0 24px;
+  position: sticky; top: 0; height: 100vh;
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 1px;
+}
+#sidebar .brand {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  margin-bottom: 8px;
+}
+#sidebar .brand .app-name { font-family: 'Merriweather', serif; font-size: 13px; font-weight: 700; color: #E2E8F0; }
+#sidebar .brand .ds-tag { font-size: 10px; font-weight: 600; color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+#sidebar h2 {
+  font-size: 10px; font-weight: 700; letter-spacing: .10em;
+  color: #334155; padding: 10px 20px 4px; text-transform: uppercase;
+}
+#sidebar a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px; font-size: 12.5px; font-weight: 600;
+  color: #64748B; text-decoration: none; transition: background .12s, color .12s;
+  border-left: 3px solid transparent;
+}
+#sidebar a:hover  { background: #1E293B; color: #CBD5E1; }
+#sidebar a.active { background: rgba(3,61,134,.25); color: #93C5FD; border-left-color: var(--primary); }
+#sidebar .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .5; flex-shrink: 0; }
+#sidebar .num { font-size: 10px; font-weight: 700; background: #1E293B; color: #475569; padding: 1px 6px; border-radius: 10px; margin-left: auto; }
+
+/* ── Main canvas ──────────────────────────────────────────────────────────── */
+#main { flex: 1; padding: 48px 52px; display: flex; flex-direction: column; gap: 80px; }
+
+.screen-section { scroll-margin-top: 24px; }
+.screen-label {
+  font-size: 18px; font-weight: 700; color: #E2E8F0;
+  margin-bottom: 6px; display: flex; align-items: center; gap: 10px;
+  font-family: 'Open Sans', sans-serif;
+}
+.screen-label .tag {
+  font-size: 10px; font-weight: 700; background: #1E3A5F; color: #60A5FA;
+  padding: 2px 8px; border-radius: 4px; letter-spacing: .06em; text-transform: uppercase;
+}
+.screen-desc { font-size: 12.5px; color: #475569; margin-bottom: 22px; }
+
+.tablet-frame {
+  width: 1280px; height: 800px;
+  background: var(--surface); border-radius: 14px; overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,.65);
+  display: flex; flex-direction: column; position: relative;
+}
+
+/* ── Shared chrome atoms ──────────────────────────────────────────────────── */
+.sb { /* status-bar 32px */
+  height: 32px; background: var(--primary-dk); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+}
+.sb span { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.75); }
+.sb .r { display: flex; gap: 16px; }
+
+.tb-wrap { flex-shrink: 0; } /* topbar wrapper = 78px bar + 2px line = 80px */
+.tb {
+  height: 78px; background: var(--primary);
+  display: flex; align-items: center; gap: 16px; padding: 0 40px;
+}
+.tb-line {
+  height: 2px;
+  background: linear-gradient(90deg,transparent,rgba(180,83,9,.65),#B45309,rgba(180,83,9,.65),transparent);
+}
+.tb .logo {
+  width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,.18);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 22px;
+}
+.tb .ttls { flex: 1; }
+.tb .ttls .t1 { font-family: 'Merriweather', serif; font-size: 21px; font-weight: 700; color: #fff; line-height: 1.1; }
+.tb .ttls .t2 { font-size: 12.5px; font-weight: 400; color: rgba(255,255,255,.65); margin-top: 2px; }
+.tb .trail { display: flex; align-items: center; gap: 10px; }
+.back-btn {
+  display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; flex-shrink: 0;
+  background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.25);
+  border-radius: 12px; padding: 7px 18px;
+  font-size: 14px; font-weight: 700; color: #fff; cursor: pointer;
+}
+.ver-badge {
+  background: rgba(255,255,255,.15); border-radius: 8px;
+  padding: 5px 14px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.85);
+}
+.cog { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.8); font-size: 20px; }
+.ok-badge-tb {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(220,252,231,.15); border: 1.5px solid rgba(167,230,196,.35);
+  border-radius: 10px; padding: 6px 12px;
+  font-size: 13px; font-weight: 700; color: #86EFAC;
+}
+
+.ca { flex: 1; background: var(--bg); overflow: hidden; position: relative; }
+.footer {
+  background: var(--bg); padding: 0 0 14px;
+  text-align: center; font-size: 13px; color: var(--txt3); flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* 1. HOME                                                                    */
+/* ══════════════════════════════════════════════════════════════════════════ */
+.home-wrap { display: flex; align-items: center; gap: 64px; padding: 0 56px; height: 100%; }
+.home-left { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+.home-left h1 {
+  font-family: 'Merriweather', serif; font-size: 38px; font-weight: 900;
+  color: var(--primary); line-height: 1.18; letter-spacing: -.02em;
+}
+.home-left .sub { font-size: 19px; color: var(--txt2); line-height: 1.6; }
+.qr-hint {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--accent-soft); border: 1.5px solid #DC9830;
+  border-radius: 20px; padding: 16px 20px;
+}
+.qr-hint .icon { font-size: 34px; color: var(--accent-dk); flex-shrink: 0; }
+.qr-hint p { font-size: 16px; color: var(--accent-dk); line-height: 1.5; }
+.home-right { flex: 1; display: flex; flex-direction: column; gap: 24px; }
+.ab {
+  display: flex; align-items: center; gap: 28px;
+  height: 160px; border-radius: 28px; padding: 0 36px; cursor: pointer;
+}
+.ab.p { background: var(--accent); }
+.ab.s { background: var(--surface); border: 2.5px solid var(--border); }
+.ab .ai {
+  width: 72px; height: 72px; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center; font-size: 40px; flex-shrink: 0;
+}
+.ab.p .ai { background: rgba(255,255,255,.18); }
+.ab.s .ai { background: #D5EFE7; }
+.ab .at { flex: 1; }
+.ab .at .a1 { font-family: 'Merriweather', serif; font-size: 25px; font-weight: 700; line-height: 1.1; }
+.ab .at .a2 { font-size: 16px; font-weight: 400; margin-top: 6px; }
+.ab.p .a1,.ab.p .a2 { color: #fff; }
+.ab.p .a2 { opacity: .75; }
+.ab.s .a1 { color: var(--txt1); }
+.ab.s .a2 { color: var(--txt2); }
+.ab .arr { font-size: 28px; opacity: .4; }
+.ab.p .arr { color: #fff; }
+.ab.s .arr { color: var(--txt1); }
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* 2. SEARCH                                                                  */
+/* ══════════════════════════════════════════════════════════════════════════ */
+.search-wrap { display: flex; align-items: center; padding: 0 56px; height: 100%; }
+.sp {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 24px 32px; height: 100%;
+}
+.sp h2 { font-family: 'Merriweather', serif; font-size: 24px; font-weight: 700; color: var(--txt1); line-height: 1.25; margin-bottom: 6px; text-align: center; }
+.sp .hin { font-size: 16px; color: var(--txt2); margin-bottom: 24px; text-align: center; }
+.inp-row { display: flex; gap: 12px; width: 100%; align-items: center; }
+.acc-inp {
+  flex: 1; height: 88px; border: 2.5px solid var(--border);
+  border-radius: 24px; background: var(--surface);
+  padding: 0 24px; display: flex; align-items: center; justify-content: space-between;
+}
+.acc-inp .ph { font-size: 36px; font-weight: 700; color: var(--txt3); }
+.acc-inp .ct { font-size: 15px; font-weight: 700; color: var(--txt3); }
+.acc-inp.ok { border-color: var(--accent); }
+.acc-inp.ok .v { font-size: 36px; font-weight: 700; color: var(--txt1); letter-spacing: .1em; }
+.acc-inp.ok .ct { color: var(--accent); }
+.s-btn {
+  height: 88px; border-radius: 24px; background: var(--accent);
+  padding: 0 28px; display: flex; align-items: center; gap: 10px; cursor: pointer;
+}
+.s-btn.dis { opacity: .45; }
+.s-btn span { font-size: 17px; font-weight: 700; color: #fff; }
+.or-div {
+  width: 56px; position: relative; height: 100%;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.or-div::before {
+  content: ''; position: absolute; left: 50%; top: 40px; bottom: 40px;
+  width: 2px; background: var(--border); transform: translateX(-50%);
+}
+.or-div .or { background: var(--bg); padding: 8px 10px; font-size: 15px; font-weight: 700; color: var(--txt3); position: relative; z-index: 1; }
+.qr-p {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 24px 32px; height: 100%; text-align: center;
+}
+.qr-p h2 { font-family: 'Merriweather', serif; font-size: 24px; font-weight: 700; color: var(--txt1); line-height: 1.25; margin-bottom: 6px; }
+.qr-p .hin { font-size: 16px; color: var(--txt2); margin-bottom: 28px; line-height: 1.5; }
+.qr-btn {
+  width: 164px; height: 164px; border-radius: 28px;
+  background: var(--surface); border: 2.5px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer; margin-bottom: 14px;
+}
+.qr-ico { width: 72px; height: 72px; border-radius: 18px; background: rgba(3,61,134,.10); display: flex; align-items: center; justify-content: center; font-size: 44px; color: var(--primary); }
+.qr-lbl { font-size: 15px; font-weight: 700; color: var(--primary); }
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* 3. LOADING OVERLAY                                                         */
+/* ══════════════════════════════════════════════════════════════════════════ */
+.ov {
+  position: absolute; inset: 0; background: rgba(0,0,0,.62);
+  display: flex; align-items: center; justify-content: center; z-index: 10;
+}
+.ov-card {
+  width: 420px; background: #fff; border-radius: 32px;
+  padding: 40px 44px; display: flex; flex-direction: column; align-items: center;
+}
+.la-wrap { width: 136px; height: 136px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+@keyframes pr { 0%{transform:scale(.38);opacity:.30} 100%{transform:scale(1);opacity:0} }
+.pr { position: absolute; inset: 0; border-radius: 50%; border: 2.5px solid var(--accent); animation: pr 1.8s linear infinite; }
+.pr:nth-child(2){animation-delay:.6s}
+.pr:nth-child(3){animation-delay:1.2s}
+@keyframes sp {to{transform:rotate(360deg)}}
+.arc-w { width: 84px; height: 84px; animation: sp .9s linear infinite; position: relative; }
+.arc-w svg { width: 100%; height: 100%; }
+.cd { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); position: absolute; }
+.ov-ttl { font-family: 'Merriweather', serif; font-size: 20px; font-weight: 700; color: var(--txt1); text-align: center; margin-bottom: 10px; }
+.ov-lbl { font-size: 12px; color: var(--txt3); letter-spacing: .06em; margin-bottom: 4px; }
+.ov-acc { font-size: 30px; font-weight: 700; color: var(--accent); letter-spacing: .08em; text-align: center; margin-bottom: 28px; }
+.cn-btn { width: 100%; height: 52px; border: 2px solid var(--border); border-radius: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.cn-btn span { font-size: 16px; font-weight: 700; color: var(--txt2); }
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* 4. QR SCANNER                                                              */
+/* ══════════════════════════════════════════════════════════════════════════ */
+.qrs-wrap { display: flex; flex: 1; overflow: hidden; }
+.cam-p { flex: 1; background: #0a0f0a; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.cam-bg { position: absolute; inset: 0; background: linear-gradient(160deg,#101a10,#050a05 50%,#0c150c); }
+.sf { position: absolute; width: 340px; height: 340px; top: 50%; left: 50%; transform: translate(-50%,-50%); border: 2px solid var(--accent); border-radius: 20px; }
+.oc { position: absolute; background: rgba(0,0,0,.55); }
+.oc.t  { top:0;left:0;right:0;height:calc(50% - 170px); }
+.oc.b  { bottom:0;left:0;right:0;height:calc(50% - 170px); }
+.oc.ll { left:0;top:calc(50% - 170px);bottom:calc(50% - 170px);width:calc(50% - 170px); }
+.oc.rr { right:0;top:calc(50% - 170px);bottom:calc(50% - 170px);width:calc(50% - 170px); }
+.sc { position: absolute; width: 28px; height: 28px; border-color: var(--accent); border-style: solid; }
+.sc.tl { top:-2px;left:-2px; border-width:4px 0 0 4px; border-radius:16px 0 0 0; }
+.sc.tr { top:-2px;right:-2px; border-width:4px 4px 0 0; border-radius:0 16px 0 0; }
+.sc.bl { bottom:-2px;left:-2px; border-width:0 0 4px 4px; border-radius:0 0 0 16px; }
+.sc.br { bottom:-2px;right:-2px; border-width:0 4px 4px 0; border-radius:0 0 16px 0; }
+@keyframes sl { 0%{top:16px;opacity:1} 88%{top:308px;opacity:1} 100%{top:308px;opacity:0} }
+.sl { position:absolute;left:8px;right:8px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);border-radius:1px;animation:sl 2s ease-in-out infinite;box-shadow:0 0 10px rgba(180,83,9,.7); }
+.cam-hin { position:absolute;bottom:24px;left:50%;transform:translateX(-50%);text-align:center; }
+.cam-hin .m { font-size:15px;font-weight:700;color:rgba(255,255,255,.9); }
+.cam-hin .s { font-size:12px;color:rgba(255,255,255,.45);margin-top:4px; }
+.cam-lbl { position:absolute;top:20px;left:50%;transform:translateX(-50%); background:rgba(0,0,0,.6);border:1px solid rgba(180,83,9,.4);border-radius:20px;padding:5px 16px; }
+.cam-lbl span { font-size:13px;font-weight:600;color:rgba(255,255,255,.85); }
+
+.tut-p { width:460px;flex-shrink:0;background:var(--surface);padding:24px 28px;display:flex;flex-direction:column;gap:14px;overflow:hidden;border-left:1px solid var(--border); }
+.tut-p .pt { font-family:'Merriweather',serif; font-size:19px;font-weight:700;color:var(--txt1); }
+.tut-p .ps { font-size:13px;color:var(--txt3);margin-top:2px;line-height:1.4; }
+.step { display:flex;gap:14px;align-items:flex-start;padding:13px 14px;border-radius:16px;border:1.5px solid var(--border);background:var(--bg); }
+.step.on { background:var(--accent-soft);border-color:rgba(180,83,9,.3); }
+.sn { width:34px;height:34px;border-radius:10px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--txt3);flex-shrink:0; }
+.step.on .sn { background:var(--accent);color:#fff; }
+.st .s1 { font-size:15px;font-weight:700;color:var(--txt1); }
+.st .s2 { font-size:12.5px;color:var(--txt2);margin-top:3px;line-height:1.4; }
+.man-row { padding:13px 14px;border-radius:16px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-top:auto; }
+.man-row .l { font-size:13px;font-weight:600;color:var(--txt2); }
+.man-row .a { color:var(--txt3);font-size:18px; }
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* 5. STEPPER BAR                                                             */
+/* ══════════════════════════════════════════════════════════════════════════ */
+.stepper-bar {
+  height: 56px; background: var(--surface); border-bottom: 1.5px solid var(--border);
+  display: flex; align-items: center; padding: 0 60px; gap: 0; flex-shrink: 0;
+}
+.step-item { display: flex; align-items: center; gap: 10px; flex: 1; }
+.sc-circle {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700;
+}
+.sc-circle.done { background: #D5EFE7; color: var(--primary); }
+.sc-circle.done::after { content: '✓'; }
+.sc-circle.active { background: var(--primary); color: #fff; }
+.sc-circle.upcoming { background: #E8F2EF; color: var(--txt3); }
+.sc-text .s1 { font-size: 14px; font-weight: 700; color: var(--txt1); }
+.sc-text .s2 { font-size: 12px; font-weight: 600; color: var(--txt2); }
+.sc-text.upcoming .s1,.sc-text.upcoming .s2 { color: var(--txt3); }
+.sc-connector { width: 48px; height: 2px; background: var(--border); flex-shrink: 0; }
+.sc-connector.done { background: var(--primary); }
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* 6. METER INPUT                                                             */
+/* ══════════════════════════════════════════════════════════════════════════ */
+.mi-wrap { display: flex; flex: 1; overflow: hidden; }
+.mi-left {
+  flex: 1; border-right: 1.5px solid var(--border);
+  padding: 18px 28px 18px 40px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto;
+}
+.mi-right {
+  flex: 1; padding: 18px 36px 18px 28px;
+  display: flex; flex-direction: column; gap: 8px; overflow: hidden;
+}
+/* Meter header */
+.mhd { display: flex; align-items: center; gap: 16px; }
+.mhd .ico-box {
+  width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 28px;
+}
+.mhd .mt1 { font-family: 'Merriweather', serif; font-size: 26px; font-weight: 700; color: var(--txt1); }
+.mhd .mt2 { font-size: 15px; font-weight: 600; color: var(--txt2); margin-top: 2px; }
+/* Detail card */
+.det-card {
+  border: 1.5px solid var(--border); border-radius: 20px; background: var(--surface);
+  padding: 10px 16px; display: flex; flex-direction: column; gap: 7px;
+}
+.det-row { display: flex; justify-content: space-between; align-items: center; }
+.det-row .dl { font-size: 13px; font-weight: 600; color: var(--txt2); }
+.det-row .dv { font-size: 14px; font-weight: 700; color: var(--txt1); }
+.det-div { height: 1px; background: var(--border); }
+/* Prev reading card */
+.prev-card {
+  border-radius: 20px; padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px; flex: 1;
+}
+.prev-card.ok { background: #D5EFE7; border: 1.5px solid #A8DFC0; }
+.prev-card.warn { background: var(--accent-soft); border: 1.5px solid #DC9830; }
+.prev-ib {
+  width: 40px; height: 40px; border-radius: 11px; background: rgba(255,255,255,.7);
+  display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+}
+.prev-lbl { font-size: 12px; font-weight: 700; letter-spacing: .05em; }
+.prev-card.ok .prev-lbl { color: #2D6A4A; }
+.prev-card.warn .prev-lbl { color: var(--accent-dk); }
+.prev-val { font-size: 30px; font-weight: 700; }
+.prev-card.ok .prev-val { color: var(--primary); }
+.prev-card.warn .prev-val { color: var(--elec); }
+.prev-unit { font-size: 15px; font-weight: 700; margin-top: 2px; }
+.prev-card.ok .prev-unit { color: #4A8A6A; }
+.prev-card.warn .prev-unit { color: #A07030; }
+.prev-date { font-size: 12px; font-weight: 600; margin-top: 2px; }
+.prev-card.ok .prev-date { color: #4A8A6A; }
+.prev-card.warn .prev-date { color: #A07030; }
+/* Hint row */
+.hint-row { display: flex; gap: 7px; align-items: flex-start; }
+.hint-row .hi { font-size: 15px; flex-shrink: 0; padding-top: 1px; }
+.hint-row p { font-size: 13px; color: var(--txt3); line-height: 1.5; }
+
+/* Input display */
+.rd-box {
+  height: 68px; border-radius: 20px; background: var(--surface);
+  border: 2.5px solid var(--accent); padding: 0 18px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.rd-box.empty { border-color: var(--border); }
+.rd-val { font-size: 44px; font-weight: 700; color: var(--txt1); display: flex; align-items: center; }
+.rd-val .last { color: var(--accent); }
+.rd-val .cur { display: inline-block; width: 3px; height: 40px; background: var(--accent); border-radius: 2px; margin-left: 2px; animation: blink .9s step-end infinite; }
+.rd-empty { font-size: 44px; font-weight: 700; color: var(--txt3); }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.rd-unit { font-size: 20px; font-weight: 700; color: var(--txt2); }
+/* Delta row */
+.delta-row {
+  border-radius: 12px; padding: 7px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.delta-row.ok  { background: #E8F2EF; border: 1.5px solid #A8DFC0; }
+.delta-row.err { background: var(--danger-pale); border: 1.5px solid rgba(185,28,28,.3); }
+.delta-row.norm { background: var(--accent-soft); border: 1.5px solid #DC9830; }
+.delta-row .di { font-size: 18px; flex-shrink: 0; }
+.delta-row p { font-size: 14px; font-weight: 700; line-height: 1.3; }
+.delta-row.ok p { color: #2D6A4A; }
+.delta-row.err p { color: var(--danger); }
+.delta-row.norm p { color: var(--accent-dk); }
+/* Numpad */
+.numpad { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.nprow { display: flex; gap: 8px; flex: 1; }
+.nk {
+  flex: 1; border-radius: 20px; background: var(--surface);
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 700; color: var(--txt1); cursor: pointer;
+}
+.nk.del { background: var(--danger-pale); border-color: #F0C0C0; font-size: 22px; color: var(--danger); }
+.nk.dot { font-size: 36px; color: var(--txt2); }
+/* Next button */
+.next-btn {
+  height: 58px; border-radius: 28px; background: var(--accent);
+  display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+}
+.next-btn.dis { opacity: .4; }
+.next-btn span { font-size: 20px; font-weight: 700; color: #fff; }
+
+/* Zone tabs */
+.zone-tabs { display: flex; gap: 8px; }
+.ztab {
+  flex: 1; height: 48px; border-radius: 12px;
+  border: 2px solid var(--border); background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; color: var(--txt2);
+}
+.ztab.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.ztab.done { background: #D5EFE7; border-color: #A8DFC0; color: var(--primary); font-size: 14px; }
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* 7. SUMMARY                                                                 */
+/* ══════════════════════════════════════════════════════════════════════════ */
+.sum-cards-area {
+  flex: 1; padding: 16px 48px; display: flex; align-items: center; justify-content: center;
+}
+.sum-cards { display: flex; gap: 18px; width: 100%; }
+.sum-card {
+  flex: 1; border-radius: 28px; background: var(--surface);
+  border: 1.5px solid var(--border); overflow: hidden; display: flex; flex-direction: column;
+}
+.sum-card .stripe { height: 5px; }
+.sum-card .body { padding: 16px 22px 22px; flex: 1; display: flex; flex-direction: column; }
+.sum-card .shd { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.sum-card .shd .ico { width: 48px; height: 48px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.sum-card .shd .mt1 { font-family: 'Merriweather', serif; font-size: 20px; font-weight: 700; color: var(--txt1); }
+.sum-card .shd .mt2 { font-size: 14px; font-weight: 600; color: var(--txt2); margin-top: 2px; }
+.sum-divider { height: 1.5px; background: var(--border); margin-bottom: 16px; }
+.sum-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.sum-row .sl { font-size: 14px; color: var(--txt3); font-weight: 600; letter-spacing: .04em; }
+.sum-row .sr { display: flex; align-items: center; gap: 4px; }
+.sum-row .old { font-size: 22px; font-weight: 700; color: var(--txt2); }
+.sum-row .arrow { font-size: 13px; color: var(--txt3); }
+.sum-row .new { font-size: 22px; font-weight: 700; color: var(--primary); }
+.sum-row .un { font-size: 14px; color: var(--txt3); font-weight: 600; }
+.delta-chip {
+  border-radius: 12px; background: #D5EFE7; padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+}
+.delta-chip .di { font-size: 16px; color: var(--primary); }
+.delta-chip .dv { font-size: 20px; font-weight: 700; color: var(--primary); }
+.delta-chip .dl { font-size: 13px; color: var(--txt2); font-weight: 600; }
+.delta-chip .du { font-size: 13px; color: var(--txt3); font-weight: 600; margin-left: auto; }
+.edit-btn {
+  height: 46px; border-radius: 20px; background: var(--surface);
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+  margin-top: auto;
+}
+.edit-btn span { font-size: 15px; font-weight: 700; color: var(--txt2); }
+/* Submit bar */
+.sub-bar {
+  height: 88px; padding: 0 48px;
+  display: flex; align-items: center; gap: 16px; flex-shrink: 0;
+}
+.info-panel {
+  flex: 1; height: 100%; border-radius: 28px; background: var(--surface);
+  border: 1.5px solid var(--border); display: flex; align-items: center; padding: 0 8px;
+}
+.info-cell {
+  flex: 1; display: flex; align-items: center; gap: 10px; padding: 0 16px;
+}
+.info-cell .ii { width: 36px; height: 36px; border-radius: 10px; background: #D5EFE7; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.info-cell .il { font-size: 13px; font-weight: 700; color: var(--txt1); }
+.info-cell .iv { font-size: 14px; color: var(--txt2); font-weight: 600; margin-top: 1px; }
+.info-sep { width: 1.5px; height: 40px; background: var(--border); flex-shrink: 0; }
+.sub-btn {
+  width: 280px; height: 100%; border-radius: 28px; background: var(--accent);
+  display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer;
+}
+.sub-btn span { font-size: 20px; font-weight: 700; color: #fff; }
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* 8. SUCCESS                                                                 */
+/* ══════════════════════════════════════════════════════════════════════════ */
+.success-wrap {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; background: var(--bg);
+}
+.success-col { width: 480px; display: flex; flex-direction: column; align-items: center; gap: 0; }
+.chk-circle {
+  width: 120px; height: 120px; border-radius: 50%; background: var(--success-pale);
+  display: flex; align-items: center; justify-content: center; font-size: 72px; margin-bottom: 28px;
+}
+.suc-title { font-family: 'Merriweather', serif; font-size: 28px; font-weight: 700; color: var(--success); text-align: center; margin-bottom: 10px; }
+.suc-sub { font-size: 16px; color: var(--txt2); text-align: center; line-height: 1.5; margin-bottom: 28px; }
+.suc-card {
+  width: 100%; border-radius: 20px; background: var(--surface);
+  border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  padding: 20px; margin-bottom: 28px;
+}
+.suc-row { display: flex; align-items: center; gap: 12px; padding: 0; }
+.suc-row .si { width: 32px; height: 32px; border-radius: 50%; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--accent); flex-shrink: 0; }
+.suc-row .sl { font-size: 15px; color: var(--txt3); flex: 1; font-weight: 400; }
+.suc-row .sv { font-size: 15px; font-weight: 700; color: var(--txt1); }
+.suc-divider { height: 1px; background: var(--divider); margin: 12px 0; }
+.tip-chip {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--accent-soft); border-radius: 12px; padding: 10px 16px; margin-bottom: 28px;
+}
+.tip-chip .ti { font-size: 16px; color: var(--accent); }
+.tip-chip p { font-size: 13px; color: var(--accent-dk); font-weight: 600; }
+/* Countdown */
+.cd-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 12px; }
+.cd-wrap p { font-size: 12px; color: var(--txt2); }
+.cd-bar { width: 100%; height: 4px; background: var(--accent-soft); border-radius: 2px; overflow: hidden; }
+.cd-fill { height: 100%; background: var(--accent); border-radius: 2px; animation: cdcount 10s linear infinite; }
+@keyframes cdcount { from{width:100%} to{width:0} }
+.home-btn {
+  width: 100%; height: 50px; border-radius: 14px; background: var(--accent);
+  display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+}
+.home-btn span { font-size: 16px; font-weight: 700; color: #fff; }
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* 9. HELP                                                                    */
+/* ══════════════════════════════════════════════════════════════════════════ */
+.help-wrap { display: flex; height: 100%; }
+.hleft {
+  flex: 1; padding: 24px 28px 20px 40px;
+  border-right: 1.5px solid var(--border); display: flex; flex-direction: column; gap: 10px; overflow-y: auto;
+}
+.hleft h3 { font-family: 'Merriweather', serif; font-size: 18px; font-weight: 700; color: var(--txt1); }
+.hleft .hs { font-size: 13px; color: var(--txt3); margin-top: -6px; }
+.hright {
+  flex: 1; padding: 24px 40px 20px 28px;
+  display: flex; flex-direction: column; gap: 14px; overflow-y: auto;
+}
+/* Method card */
+.mc {
+  display: flex; overflow: hidden;
+  border-radius: 20px; background: var(--surface);
+  border: 1.5px solid var(--border); height: min-content;
+}
+.mc .bar { width: 4px; background: var(--accent); flex-shrink: 0; }
+.mc .mc-body { display: flex; align-items: center; gap: 16px; padding: 14px 16px; flex: 1; }
+.mc .mi2 { width: 48px; height: 48px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+.mc .mcol { flex: 1; }
+.mc .mt { font-size: 15px; font-weight: 700; color: var(--txt1); line-height: 1.25; }
+.mc .md { font-size: 13px; color: var(--txt2); line-height: 1.4; margin-top: 3px; }
+.mc .mpn { font-size: 17px; font-weight: 700; color: var(--txt1); margin-top: 4px; }
+.mc .tag { display: inline-block; background: var(--success-pale); color: var(--success-txt); font-size: 10px; font-weight: 700; border-radius: 20px; padding: 2px 9px; margin-top: 4px; }
+/* Period strip */
+.period-strip {
+  border-radius: 20px; background: linear-gradient(90deg,var(--primary-pale),#E0EDFF);
+  border: 1.5px solid #B3D1FF; padding: 14px 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+.period-strip .pi { width: 52px; height: 52px; border-radius: 14px; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+.period-strip .eyebrow { font-size: 11px; font-weight: 700; color: var(--primary); letter-spacing: .06em; }
+.period-strip .val { font-family: 'Merriweather', serif; font-size: 24px; font-weight: 700; color: var(--txt1); }
+.period-strip .sub { font-size: 12px; color: var(--txt2); line-height: 1.4; margin-top: 2px; }
+/* Notice card */
+.notice-card {
+  border-radius: 20px; background: var(--surface); border: 1.5px solid var(--border);
+  padding: 18px 22px;
+}
+.notice-card .nh { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.notice-card .nh span { font-size: 18px; }
+.notice-card .nh .nt { font-size: 14px; font-weight: 700; color: var(--txt1); }
+.nr { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; }
+.nr .nb { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.nr .nl { font-size: 13px; font-weight: 700; color: var(--txt1); line-height: 1.3; }
+.nr .nd { font-size: 12px; color: var(--txt2); line-height: 1.4; margin-top: 2px; }
+.nr-div { height: 1px; background: var(--border); }
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* VIDEO CALL (new feature — видеосвязь с оператором)                          */
+/* ══════════════════════════════════════════════════════════════════════════ */
+.vc-stage {
+  position: absolute; inset: 0;
+  background: radial-gradient(120% 90% at 50% 8%, #11346F 0%, #0A2A63 55%, #06205A 100%);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+/* waiting */
+.vc-wait { display: flex; flex-direction: column; align-items: center; gap: 30px; text-align: center; }
+.vc-pulse { position: relative; width: 168px; height: 168px; display: flex; align-items: center; justify-content: center; }
+.vc-core { width: 132px; height: 132px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 58px; box-shadow: 0 14px 40px rgba(3,61,134,.5); }
+.vc-ring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid rgba(127,164,247,.55); animation: vc-pulse 2.2s cubic-bezier(.22,1,.36,1) infinite; }
+.vc-ring.d2 { animation-delay: .7s; }
+@keyframes vc-pulse { 0% { transform: scale(1); opacity: .7 } 100% { transform: scale(1.7); opacity: 0 } }
+.vc-wait h1 { font-family: 'Merriweather', serif; font-size: 34px; font-weight: 700; color: #fff; }
+.vc-wait p { font-size: 19px; color: #EAF1FF; opacity: .85; margin-top: 8px; }
+.vc-badge { display: inline-flex; align-items: center; gap: 12px; padding: 13px 24px; border-radius: 999px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); font-size: 18px; font-weight: 600; color: #fff; }
+.vc-badge .d { width: 11px; height: 11px; border-radius: 50%; background: #DC9830; }
+.vc-cancel { position: absolute; bottom: 40px; left: 0; right: 0; display: flex; justify-content: center; }
+.vc-endbtn { display: inline-flex; align-items: center; gap: 12px; height: 70px; padding: 0 40px; border-radius: 999px; background: var(--danger); color: #fff; border: none; font-size: 21px; font-weight: 700; font-family: 'Merriweather', serif; cursor: pointer; box-shadow: 0 12px 30px rgba(185,28,28,.42); }
+/* active */
+.vc-remote { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+.vc-avatar { width: 150px; height: 150px; border-radius: 50%; background: rgba(255,255,255,.1); border: 2px solid rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; font-size: 70px; }
+.vc-remote .nm { font-size: 21px; color: #EAF1FF; }
+.vc-top { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 24px 32px; }
+.vc-top .live { display: inline-flex; align-items: center; gap: 9px; padding: 9px 18px; border-radius: 999px; background: rgba(0,0,0,.32); border: 1px solid rgba(255,255,255,.15); font-size: 16px; font-weight: 600; color: #fff; }
+.vc-top .live .d { width: 11px; height: 11px; border-radius: 50%; background: var(--success); }
+.vc-top .tm { font-size: 24px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
+.vc-self { position: absolute; top: 28px; right: 32px; width: 210px; height: 146px; border-radius: 20px; overflow: hidden; background: linear-gradient(150deg,#1B3A6B,#0A2A63); border: 2px solid rgba(255,255,255,.22); box-shadow: 0 14px 40px rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; font-size: 44px; color: rgba(255,255,255,.5); }
+.vc-self .lbl { position: absolute; bottom: 8px; left: 12px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.85); }
+.vc-controls { position: absolute; bottom: 40px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 28px; }
+.vc-ctrl { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.vc-ctrl button { width: 84px; height: 84px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.16); color: #fff; font-size: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.vc-ctrl.end button { width: 96px; height: 96px; background: var(--danger); border: none; box-shadow: 0 10px 28px rgba(185,28,28,.45); }
+.vc-ctrl .cl { font-size: 15px; font-weight: 600; color: #EAF1FF; }
+
+/* operator desktop workstation */
+.op-frame { width: 1280px; border-radius: 14px; overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,.65); background: var(--surface); }
+.op-winbar { height: 44px; background: #E8ECF3; display: flex; align-items: center; gap: 9px; padding: 0 18px; border-bottom: 1px solid var(--border); }
+.op-winbar i { width: 13px; height: 13px; border-radius: 50%; background: #C5CDDB; }
+.op-winbar .ttl { margin-left: 14px; font-size: 13px; font-weight: 600; color: var(--txt2); }
+.op-body { display: flex; height: 668px; }
+.op-side { width: 320px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); padding: 22px; overflow: hidden; }
+.op-side .sh { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.op-side .sh h3 { font-family: 'Merriweather', serif; font-size: 20px; font-weight: 700; color: var(--txt1); }
+.op-side .sh .cnt { min-width: 28px; height: 28px; padding: 0 9px; border-radius: 999px; background: var(--primary); color: #fff; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.op-q { display: flex; flex-direction: column; gap: 10px; }
+.op-qi { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 14px; border: 1px solid var(--border); }
+.op-qi.act { background: var(--accent-soft); border-color: #DC9830; }
+.op-qn { width: 40px; height: 40px; flex-shrink: 0; border-radius: 10px; background: var(--divider); color: var(--txt3); display: flex; align-items: center; justify-content: center; font-family: 'Merriweather', serif; font-size: 18px; font-weight: 700; }
+.op-qi.act .op-qn { background: var(--primary); color: #fff; }
+.op-qm { flex: 1; min-width: 0; }
+.op-qm .k { font-size: 15px; font-weight: 700; color: var(--txt1); }
+.op-qm .l { font-size: 12.5px; color: var(--txt3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.op-qw { font-size: 12.5px; font-weight: 700; color: var(--accent-dk); }
+.op-qi.act .op-qw { color: var(--primary); }
+.op-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.op-bar { height: 64px; flex-shrink: 0; background: var(--primary); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+.op-bar .who { display: flex; align-items: center; gap: 12px; }
+.op-bar .av { width: 38px; height: 38px; border-radius: 9px; background: rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.op-bar .nm { font-family: 'Merriweather', serif; font-size: 16px; font-weight: 700; color: #fff; }
+.op-bar .rl { font-size: 11.5px; color: rgba(255,255,255,.65); }
+.op-bar .st { display: inline-flex; align-items: center; gap: 8px; padding: 7px 15px; border-radius: 999px; background: rgba(255,255,255,.14); font-size: 13px; font-weight: 600; color: #fff; }
+.op-bar .st .d { width: 9px; height: 9px; border-radius: 50%; background: var(--success); }
+.op-stage { flex: 1; padding: 22px; display: flex; align-items: center; justify-content: center; }
+.op-video { position: relative; width: 100%; height: 100%; border-radius: 20px; overflow: hidden; background: radial-gradient(120% 90% at 50% 0%, #11346F, #0A2A63 60%, #06205A); display: flex; align-items: center; justify-content: center; }
+.op-vlabel { display: flex; flex-direction: column; align-items: center; gap: 12px; color: #EAF1FF; }
+.op-vlabel .av { width: 110px; height: 110px; border-radius: 50%; background: rgba(255,255,255,.1); border: 2px solid rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; font-size: 52px; }
+.op-pip { position: absolute; top: 18px; right: 18px; width: 168px; height: 116px; border-radius: 14px; background: linear-gradient(150deg,#1B3A6B,#0A2A63); border: 2px solid rgba(255,255,255,.22); display: flex; align-items: center; justify-content: center; font-size: 34px; color: rgba(255,255,255,.5); }
+.op-vc { position: absolute; bottom: 18px; left: 0; right: 0; display: flex; justify-content: center; gap: 16px; }
+.op-vc button { width: 54px; height: 54px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.16); color: #fff; font-size: 22px; cursor: pointer; }
+.op-vc .end { width: auto; padding: 0 24px; border-radius: 999px; background: var(--danger); border: none; font-size: 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 9px; }
+/* operator incoming overlay */
+.op-ovl { position: absolute; inset: 0; background: rgba(3,61,134,.4); display: flex; align-items: center; justify-content: center; }
+.op-dialog { width: 420px; background: var(--surface); border-radius: 24px; box-shadow: 0 24px 60px rgba(0,0,0,.4); overflow: hidden; }
+.op-dialog .top { padding: 32px 32px 22px; text-align: center; }
+.op-incav { position: relative; width: 92px; height: 92px; margin: 0 auto 18px; border-radius: 50%; background: var(--primary-pale); display: flex; align-items: center; justify-content: center; font-size: 42px; color: var(--primary); }
+.op-incring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid var(--primary-pale); animation: vc-pulse 1.8s cubic-bezier(.22,1,.36,1) infinite; }
+.op-dialog .h { font-family: 'Merriweather', serif; font-size: 23px; font-weight: 700; color: var(--txt1); margin-bottom: 6px; }
+.op-dialog .s1 { font-size: 15px; color: var(--txt2); }
+.op-dialog .s2 { font-size: 13px; color: var(--txt3); margin-top: 2px; }
+.op-dialog .more { margin-top: 16px; font-size: 12.5px; font-weight: 700; color: var(--accent-dk); }
+.op-dialog .acts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 18px 32px 32px; }
+.op-dialog .acts button { height: 56px; border-radius: 14px; font-size: 17px; font-weight: 700; font-family: 'Merriweather', serif; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 9px; }
+.op-dialog .rej { background: var(--surface); border: 1.5px solid var(--border); color: var(--txt1); }
+.op-dialog .acc { background: var(--success); border: none; color: #fff; box-shadow: 0 8px 22px rgba(22,163,74,.3); }
+
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ───────────────────────────────────────────────────────────── -->
+<nav id="sidebar">
+  <div class="brand">
+    <div class="app-name">CountersReader</div>
+    <div class="ds-tag">Brand Design System</div>
+  </div>
+  <h2>Экраны</h2>
+  <a href="#s1" class="active"><span class="dot"></span> Главная <span class="num">01</span></a>
+  <a href="#s2"><span class="dot"></span> Поиск счёта <span class="num">02</span></a>
+  <a href="#s3"><span class="dot"></span> Загрузка (оверлей) <span class="num">03</span></a>
+  <a href="#s4"><span class="dot"></span> QR-сканер <span class="num">04</span></a>
+  <a href="#s5"><span class="dot"></span> Ввод (ХВС) <span class="num">05</span></a>
+  <a href="#s6"><span class="dot"></span> Ввод (электро 2-зон) <span class="num">06</span></a>
+  <a href="#s7"><span class="dot"></span> Итог &amp; отправка <span class="num">07</span></a>
+  <a href="#s8"><span class="dot"></span> Успех <span class="num">08</span></a>
+  <a href="#s9"><span class="dot"></span> Помощь <span class="num">09</span></a>
+  <h2 style="margin-top:16px">Видеосвязь · NEW</h2>
+  <a href="#s10"><span class="dot"></span> Звонок — ожидание <span class="num">10</span></a>
+  <a href="#s11"><span class="dot"></span> Звонок — разговор <span class="num">11</span></a>
+  <a href="#s12"><span class="dot"></span> Оператор — приём <span class="num">12</span></a>
+  <h2 style="margin-top:16px">Токены</h2>
+  <a href="#tokens"><span class="dot" style="background:#033D86;opacity:1"></span> Цвета / шрифты</a>
+</nav>
+
+<!-- ── Main canvas ───────────────────────────────────────────────────────── -->
+<main id="main">
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  1. HOME
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="s1">
+  <div class="screen-label">Главная <span class="tag">Home</span></div>
+  <div class="screen-desc">Приветственный экран. Два действия: передать показания (CTA оранжевый) и помощь (вторичный).</div>
+  <div class="tablet-frame">
+    <!-- Status bar -->
+    <div class="sb"><span>09:41</span><div class="r"><span>Wi-Fi</span><span>100%</span></div></div>
+    <!-- Top bar -->
+    <div class="tb-wrap">
+      <div class="tb">
+        <div class="logo">🏢</div>
+        <div class="ttls">
+          <div class="t1">Личный кабинет ЕИРЦ ЛО</div>
+          <div class="t2">Передача показаний приборов учёта</div>
+        </div>
+        <div class="trail">
+          <div class="cog">⚙</div>
+          <div class="ver-badge">Версия 2.4.1</div>
+        </div>
+      </div>
+      <div class="tb-line"></div>
+    </div>
+    <!-- Body -->
+    <div class="ca">
+      <div class="home-wrap">
+        <div class="home-left">
+          <h1>Добро<br>пожаловать!</h1>
+          <p class="sub">Передавайте показания счётчиков быстро и удобно — прямо с планшета.</p>
+          <div class="qr-hint">
+            <div class="icon">📱</div>
+            <p>На квитанции есть QR-код — его можно отсканировать для быстрого входа.</p>
+          </div>
+        </div>
+        <div class="home-right">
+          <div class="ab p">
+            <div class="ai">📄</div>
+            <div class="at">
+              <div class="a1">Передать показания</div>
+              <div class="a2">Найти лицевой счёт и ввести данные</div>
+            </div>
+            <div class="arr">›</div>
+          </div>
+          <div class="ab s">
+            <div class="ai" style="background:#DCFCE7">❓</div>
+            <div class="at">
+              <div class="a1">Помощь</div>
+              <div class="a2">Инструкция, телефон поддержки, FAQ</div>
+            </div>
+            <div class="arr">›</div>
+          </div>
+          <div class="ab s">
+            <div class="ai" style="background:var(--primary-pale)">📹</div>
+            <div class="at">
+              <div class="a1">Видеосвязь с оператором</div>
+              <div class="a2">Поможем передать показания по видеозвонку</div>
+            </div>
+            <div class="arr">›</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer -->
+    <div class="footer">АО ЕИРЦ Ленинградской области · ИНН 4705041753 · Техподдержка: 8 800 700-57-57</div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  2. ACCOUNT SEARCH — пустое поле
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="s2">
+  <div class="screen-label">Поиск лицевого счёта <span class="tag">AccountSearch</span></div>
+  <div class="screen-desc">Шаг 1 из 3. Слева — ввод номера. Справа — QR-сканирование. Разделитель «или».</div>
+  <div class="tablet-frame">
+    <div class="sb"><span>09:41</span><div class="r"><span>Wi-Fi</span><span>100%</span></div></div>
+    <div class="tb-wrap">
+      <div class="tb">
+        <div class="logo">🏢</div>
+        <div class="ttls">
+          <div class="t1">Передача показаний</div>
+          <div class="t2">Шаг 1 из 3 — Найти лицевой счёт</div>
+        </div>
+        <div class="trail">
+          <div class="cog">⚙</div>
+          <div class="back-btn">← Назад</div>
+        </div>
+      </div>
+      <div class="tb-line"></div>
+    </div>
+    <div class="ca">
+      <div class="search-wrap">
+        <!-- Panel A -->
+        <div class="sp">
+          <h2>Ввести номер<br>лицевого счёта</h2>
+          <p class="hin">Номер указан в верхней части квитанции</p>
+          <div class="inp-row">
+            <div class="acc-inp">
+              <span class="ph">000000000000</span>
+              <span class="ct">0/12</span>
+            </div>
+            <div class="s-btn dis"><span>🔍</span><span>Найти</span></div>
+          </div>
+          <p style="font-size:15px;color:var(--txt3);margin-top:10px">12 цифр лицевого счёта из квитанции</p>
+        </div>
+        <!-- Divider -->
+        <div class="or-div"><div class="or">или</div></div>
+        <!-- Panel B -->
+        <div class="qr-p">
+          <h2>Отсканировать<br>QR-код с квитанции</h2>
+          <p class="hin">Наведите камеру планшета на QR-код —<br>данные введутся автоматически</p>
+          <div class="qr-btn">
+            <div class="qr-ico">📲</div>
+            <div class="qr-lbl">Сканировать</div>
+          </div>
+          <p style="font-size:14px;color:var(--txt3)">Держите квитанцию ровно,<br>в хорошем освещении</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  2b. ACCOUNT SEARCH — введён номер (active state)
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section">
+  <div class="screen-label">Поиск — номер введён <span class="tag">AccountSearch · filled</span></div>
+  <div class="screen-desc">Поле заполнено 12 цифрами: оранжевая рамка, счётчик оранжевый, кнопка «Найти» активна.</div>
+  <div class="tablet-frame">
+    <div class="sb"><span>09:41</span><div class="r"><span>Wi-Fi</span><span>100%</span></div></div>
+    <div class="tb-wrap">
+      <div class="tb">
+        <div class="logo">🏢</div>
+        <div class="ttls">
+          <div class="t1">Передача показаний</div>
+          <div class="t2">Шаг 1 из 3 — Найти лицевой счёт</div>
+        </div>
+        <div class="trail">
+          <div class="cog">⚙</div>
+          <div class="back-btn">← Назад</div>
+        </div>
+      </div>
+      <div class="tb-line"></div>
+    </div>
+    <div class="ca">
+      <div class="search-wrap">
+        <div class="sp">
+          <h2>Ввести номер<br>лицевого счёта</h2>
+          <p class="hin">Номер указан в верхней части квитанции</p>
+          <div class="inp-row">
+            <div class="acc-inp ok">
+              <span class="v">470504175312</span>
+              <span class="ct">12/12</span>
+            </div>
+            <div class="s-btn"><span>🔍</span><span>Найти</span></div>
+          </div>
+          <p style="font-size:15px;color:var(--txt3);margin-top:10px">12 цифр лицевого счёта из квитанции</p>
+        </div>
+        <div class="or-div"><div class="or">или</div></div>
+        <div class="qr-p">
+          <h2>Отсканировать<br>QR-код с квитанции</h2>
+          <p class="hin">Наведите камеру планшета на QR-код —<br>данные введутся автоматически</p>
+          <div class="qr-btn">
+            <div class="qr-ico">📲</div>
+            <div class="qr-lbl">Сканировать</div>
+          </div>
+          <p style="font-size:14px;color:var(--txt3)">Держите квитанцию ровно,<br>в хорошем освещении</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  3. LOADING OVERLAY
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="s3">
+  <div class="screen-label">Загрузка (оверлей) <span class="tag">SearchLoadingOverlay</span></div>
+  <div class="screen-desc">Поверх экрана поиска. Оранжевые пульсирующие кольца + вращающаяся дуга. Кнопка «Отмена».</div>
+  <div class="tablet-frame">
+    <div class="sb"><span>09:41</span><div class="r"><span>Wi-Fi</span><span>100%</span></div></div>
+    <div class="tb-wrap">
+      <div class="tb">
+        <div class="logo">🏢</div>
+        <div class="ttls">
+          <div class="t1">Передача показаний</div>
+          <div class="t2">Шаг 1 из 3 — Найти лицевой счёт</div>
+        </div>
+        <div class="trail">
+          <div class="cog">⚙</div>
+          <div class="back-btn">← Назад</div>
+        </div>
+      </div>
+      <div class="tb-line"></div>
+    </div>
+    <div class="ca">
+      <div class="search-wrap">
+        <div class="sp">
+          <div class="inp-row">
+            <div class="acc-inp ok"><span class="v">470504175312</span><span class="ct" style="color:var(--accent)">12/12</span></div>
+          </div>
+        </div>
+        <div class="or-div"><div class="or">или</div></div>
+        <div class="qr-p"></div>
+      </div>
+      <!-- Overlay -->
+      <div class="ov">
+        <div class="ov-card">
+          <div class="la-wrap">
+            <div class="pr"></div>
+            <div class="pr"></div>
+            <div class="pr"></div>
+            <div class="arc-w">
+              <svg viewBox="0 0 84 84" fill="none">
+                <circle cx="42" cy="42" r="37" stroke="#B45309" stroke-opacity=".12" stroke-width="7"/>
+                <path d="M42 5 A37 37 0 1 1 6 42" stroke="#B45309" stroke-width="7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="cd"></div>
+          </div>
+          <div class="ov-ttl">Выполняется поиск...</div>
+          <div class="ov-lbl">ЛИЦЕВОЙ СЧЁТ</div>
+          <div class="ov-acc">4705 0417 5312</div>
+          <div class="cn-btn"><span>✕</span><span>Отмена</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  4. QR SCANNER
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="s4">
+  <div class="screen-label">QR-сканер <span class="tag">TabletQrScreen</span></div>
+  <div class="screen-desc">Слева — камера с оранжевой рамкой и scan-line. Справа — анимированный туториал (4 шага).</div>
+  <div class="tablet-frame">
+    <div class="sb"><span>09:41</span><div class="r"><span>Wi-Fi</span><span>100%</span></div></div>
+    <div class="tb-wrap">
+      <div class="tb">
+        <div class="logo">🏢</div>
+        <div class="ttls">
+          <div class="t1">Сканирование QR-кода</div>
+          <div class="t2">Направьте камеру на QR-код в квитанции</div>
+        </div>
+        <div class="trail">
+          <div class="back-btn">← Назад</div>
+        </div>
+      </div>
+      <div class="tb-line"></div>
+    </div>
+    <div class="qrs-wrap">
+      <!-- Camera -->
+      <div class="cam-p">
+        <div class="cam-bg"></div>
+        <!-- Overlay panels -->
+        <div class="oc t"></div>
+        <div class="oc b"></div>
+        <div class="oc ll"></div>
+        <div class="oc rr"></div>
+        <!-- Frame + corners -->
+        <div class="sf">
+          <div class="sc tl"></div>
+          <div class="sc tr"></div>
+          <div class="sc bl"></div>
+          <div class="sc br"></div>
+          <!-- Scan line -->
+          <div class="sl"></div>
+        </div>
+        <!-- Top label -->
+        <div class="cam-lbl"><span>🔍 Поиск QR-кода…</span></div>
+        <!-- Bottom hint -->
+        <div class="cam-hin">
+          <div class="m">Наведите на QR-код в квитанции</div>
+          <div class="s">Убедитесь в хорошем освещении</div>
+        </div>
+      </div>
+      <!-- Tutorial -->
+      <div class="tut-p">
+        <div class="pt">Как отсканировать квитанцию</div>
+        <div class="ps">Следуйте инструкции — это займёт 5 секунд</div>
+        <div class="step on">
+          <div class="sn">1</div>
+          <div class="st">
+            <div class="s1">Возьмите квитанцию</div>
+            <div class="s2">Найдите QR-код в правом верхнем углу квитанции ЕИРЦ ЛО</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="sn">2</div>
+          <div class="st">
+            <div class="s1">Поднесите к камере</div>
+            <div class="s2">Держите квитанцию на расстоянии 15–30 см, ровно</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="sn">3</div>
+          <div class="st">
+            <div class="s1">Дождитесь распознавания</div>
+            <div class="s2">Система автоматически считает номер лицевого счёта</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="sn">4</div>
+          <div class="st">
+            <div class="s1">Подтвердите данные</div>
+            <div class="s2">Проверьте правильность номера и нажмите «К приборам учёта»</div>
+          </div>
+        </div>
+        <div class="man-row">
+          <span class="l">Ввести номер вручную</span>
+          <span class="a">›</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  5. METER INPUT — ХВС (single zone)
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="s5">
+  <div class="screen-label">Ввод показаний — ХВС <span class="tag">MeterInputPane · cold water</span></div>
+  <div class="screen-desc">Счётчик 1 из 2. Слева — данные и история. Справа — дисплей, дельта, цифровая клавиатура, кнопка «Далее».</div>
+  <div class="tablet-frame">
+    <div class="sb"><span>09:41</span><div class="r"><span>Wi-Fi</span><span>100%</span></div></div>
+    <div class="tb-wrap">
+      <div class="tb">
+        <div class="logo">🏢</div>
+        <div class="ttls">
+          <div class="t1">Передача показаний</div>
+          <div class="t2">Шаг 3 из 3 — Ввод показаний</div>
+        </div>
+        <div class="trail">
+          <div class="cog">⚙</div>
+          <div class="back-btn">← Назад</div>
+        </div>
+      </div>
+      <div class="tb-line"></div>
+    </div>
+    <!-- Stepper -->
+    <div class="stepper-bar">
+      <div class="step-item">
+        <div class="sc-circle done"></div>
+        <div class="sc-text done"><div class="s1">Счётчик ХВС</div><div class="s2">154,328 м³ ✓</div></div>
+      </div>
+      <div class="sc-connector done"></div>
+      <div class="step-item">
+        <div class="sc-circle active">2</div>
+        <div class="sc-text active"><div class="s1">Счётчик ГВС</div><div class="s2">Горячее · Ванная</div></div>
+      </div>
+      <div class="sc-connector"></div>
+      <div class="step-item">
+        <div class="sc-circle upcoming">3</div>
+        <div class="sc-text upcoming"><div class="s1">Электросчётчик</div><div class="s2">Двухзонный · Квартира</div></div>
+      </div>
+    </div>
+    <!-- Input -->
+    <div class="mi-wrap">
+      <!-- Left panel -->
+      <div class="mi-left">
+        <div class="mhd">
+          <div class="ico-box" style="background:var(--cold-bg)">💧</div>
+          <div>
+            <div class="mt1">Счётчик ХВС</div>
+            <div class="mt2">Холодное водоснабжение · Кухня</div>
+          </div>
+        </div>
+        <div class="det-card">
+          <div class="det-row"><span class="dl">Серийный номер</span><span class="dv">СХВ-24751203</span></div>
+          <div class="det-div"></div>
+          <div class="det-row"><span class="dl">Единица измерения</span><span class="dv">м³</span></div>
+          <div class="det-div"></div>
+          <div class="det-row"><span class="dl">Поверка действительна до</span><span class="dv" style="color:var(--primary)">15.06.2027</span></div>
+        </div>
+        <div class="prev-card ok" style="flex:1">
+          <div class="prev-ib">📅</div>
+          <div>
+            <div class="prev-lbl">ПОСЛЕДНЕЕ ПОКАЗАНИЕ</div>
+            <div class="prev-val">152,810</div>
+            <div class="prev-unit">м³</div>
+            <div class="prev-date">передано 24.04.2026</div>
+          </div>
+        </div>
+        <div class="hint-row">
+          <span class="hi">ℹ️</span>
+          <p>Введите показание с циферблата счётчика. Новое значение должно быть не меньше предыдущего.</p>
+        </div>
+      </div>
+      <!-- Right panel -->
+      <div class="mi-right">
+        <div style="font-size:15px;font-weight:700;color:var(--txt2);letter-spacing:.06em">НОВОЕ ПОКАЗАНИЕ</div>
+        <div class="rd-box">
+          <div class="rd-val">154,32<span class="last">8</span><span class="cur"></span></div>
+          <div class="rd-unit">м³</div>
+        </div>
+        <div class="delta-row norm">
+          <span class="di">↑</span>
+          <p>Расход: +1,518 м³ с 24.04.2026 — похоже на правду</p>
+        </div>
+        <div class="numpad">
+          <div class="nprow"><div class="nk">7</div><div class="nk">8</div><div class="nk">9</div></div>
+          <div class="nprow"><div class="nk">4</div><div class="nk">5</div><div class="nk">6</div></div>
+          <div class="nprow"><div class="nk">1</div><div class="nk">2</div><div class="nk">3</div></div>
+          <div class="nprow"><div class="nk dot">·</div><div class="nk">0</div><div class="nk del">⌫</div></div>
+        </div>
+        <div class="next-btn"><span>Далее</span><span style="font-size:24px;font-weight:700;color:#fff">›</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  6. METER INPUT — Электро (двухзонный)
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="s6">
+  <div class="screen-label">Ввод показаний — Электро Т1/Т2 <span class="tag">MeterInputPane · electricity 2-zone</span></div>
+  <div class="screen-desc">Двухзонный счётчик: вкладки Т1 (день) и Т2 (ночь). Т1 введён — показан как done. Т2 активна.</div>
+  <div class="tablet-frame">
+    <div class="sb"><span>09:41</span><div class="r"><span>Wi-Fi</span><span>100%</span></div></div>
+    <div class="tb-wrap">
+      <div class="tb">
+        <div class="logo">🏢</div>
+        <div class="ttls">
+          <div class="t1">Передача показаний</div>
+          <div class="t2">Шаг 3 из 3 — Ввод показаний</div>
+        </div>
+        <div class="trail">
+          <div class="cog">⚙</div>
+          <div class="back-btn">← Назад</div>
+        </div>
+      </div>
+      <div class="tb-line"></div>
+    </div>
+    <div class="stepper-bar">
+      <div class="step-item">
+        <div class="sc-circle done"></div>
+        <div class="sc-text done"><div class="s1">Счётчик ХВС</div><div class="s2">154,328 м³ ✓</div></div>
+      </div>
+      <div class="sc-connector done"></div>
+      <div class="step-item">
+        <div class="sc-circle done"></div>
+        <div class="sc-text done"><div class="s1">Счётчик ГВС</div><div class="s2">87,640 м³ ✓</div></div>
+      </div>
+      <div class="sc-connector done"></div>
+      <div class="step-item">
+        <div class="sc-circle active">3</div>
+        <div class="sc-text active"><div class="s1">Электросчётчик</div><div class="s2">Двухзонный · Квартира</div></div>
+      </div>
+    </div>
+    <div class="mi-wrap">
+      <div class="mi-left">
+        <div class="mhd">
+          <div class="ico-box" style="background:var(--elec-bg)">⚡</div>
+          <div>
+            <div class="mt1">Электросчётчик</div>
+            <div class="mt2">Электроснабжение · Двухзонный</div>
+          </div>
+        </div>
+        <div class="det-card">
+          <div class="det-row"><span class="dl">Серийный номер</span><span class="dv">ЭЛ-00872541</span></div>
+          <div class="det-div"></div>
+          <div class="det-row"><span class="dl">Единица измерения</span><span class="dv">кВт·ч</span></div>
+          <div class="det-div"></div>
+          <div class="det-row"><span class="dl">Тариф Т1 (день 7:00–23:00)</span><span class="dv" style="color:var(--elec)">4 217,500 кВт·ч</span></div>
+          <div class="det-row"><span class="dl">Тариф Т2 (ночь 23:00–7:00)</span><span class="dv" style="color:var(--cold)">2 103,200 кВт·ч</span></div>
+        </div>
+        <div class="prev-card ok" style="flex:1">
+          <div class="prev-ib">📅</div>
+          <div>
+            <div class="prev-lbl">ПОСЛЕДНЕЕ ПОКАЗАНИЕ</div>
+            <div class="prev-val">4217,5</div>
+            <div class="prev-unit">Т1 кВт·ч</div>
+            <div class="prev-date">передано 24.04.2026</div>
+          </div>
+        </div>
+        <div class="hint-row" style="background:var(--accent-soft);border:1.5px solid #DC9830;border-radius:12px;padding:10px 14px">
+          <span class="hi">⚠️</span>
+          <p style="color:var(--accent-dk)">Счётчик двухзонный — нужно ввести Т1 (день) и Т2 (ночь) отдельно.</p>
+        </div>
+      </div>
+      <div class="mi-right">
+        <!-- Zone tabs -->
+        <div class="zone-tabs">
+          <div class="ztab done">✓ Т1 День · 4 228,100 кВт·ч</div>
+          <div class="ztab on">Т2 Ночь — ввод</div>
+        </div>
+        <div style="font-size:15px;font-weight:700;color:var(--txt2);letter-spacing:.06em">НОВОЕ ПОКАЗАНИЕ (Т2 НОЧЬ)</div>
+        <div class="rd-box">
+          <div class="rd-val">2 11<span class="last">4</span><span class="cur"></span></div>
+          <div class="rd-unit">кВт·ч</div>
+        </div>
+        <div class="delta-row norm">
+          <span class="di">↑</span>
+          <p>Расход: +10,8 кВт·ч с 24.04.2026 — похоже на правду</p>
+        </div>
+        <div class="numpad">
+          <div class="nprow"><div class="nk">7</div><div class="nk">8</div><div class="nk">9</div></div>
+          <div class="nprow"><div class="nk">4</div><div class="nk">5</div><div class="nk">6</div></div>
+          <div class="nprow"><div class="nk">1</div><div class="nk">2</div><div class="nk">3</div></div>
+          <div class="nprow"><div class="nk dot">·</div><div class="nk">0</div><div class="nk del">⌫</div></div>
+        </div>
+        <div class="next-btn"><span>К итогу</span><span style="font-size:24px;font-weight:700;color:#fff">›</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  7. SUMMARY & SUBMIT
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="s7">
+  <div class="screen-label">Итог и отправка <span class="tag">SummaryContent</span></div>
+  <div class="screen-desc">Проверка перед отправкой: карточки счётчиков, delta-чип, кнопка «Передать показания» (оранжевая).</div>
+  <div class="tablet-frame">
+    <div class="sb"><span>09:41</span><div class="r"><span>Wi-Fi</span><span>100%</span></div></div>
+    <div class="tb-wrap">
+      <div class="tb">
+        <div class="logo">🏢</div>
+        <div class="ttls">
+          <div class="t1">Проверьте и отправьте</div>
+          <div class="t2">Лицевой счёт 470504175312 · Показания готовы к отправке</div>
+        </div>
+        <div class="trail">
+          <div class="cog">⚙</div>
+          <div class="ok-badge-tb">✓ 3 из 3 введены</div>
+          <div class="back-btn">← На поиск счёта</div>
+        </div>
+      </div>
+      <div class="tb-line"></div>
+    </div>
+    <!-- Cards -->
+    <div class="sum-cards-area">
+      <div class="sum-cards">
+        <!-- Cold water card -->
+        <div class="sum-card">
+          <div class="stripe" style="background:var(--cold)"></div>
+          <div class="body">
+            <div class="shd">
+              <div class="ico" style="background:var(--cold-bg)">💧</div>
+              <div><div class="mt1">Счётчик ХВС</div><div class="mt2">Холодное водоснабжение</div></div>
+            </div>
+            <div class="sum-divider"></div>
+            <div class="sum-row">
+              <span class="sl">Было</span>
+              <div class="sr"><span class="old">152,810</span><span class="arrow"> → </span><span class="new">154,328</span><span class="un">&nbsp;м³</span></div>
+            </div>
+            <div class="delta-chip">
+              <span class="di">→</span><span class="dv">+1,518</span><span class="dl">расход</span><span class="du">м³</span>
+            </div>
+            <div class="edit-btn"><span>✎</span><span>Исправить</span></div>
+          </div>
+        </div>
+        <!-- Hot water card -->
+        <div class="sum-card">
+          <div class="stripe" style="background:var(--hot)"></div>
+          <div class="body">
+            <div class="shd">
+              <div class="ico" style="background:var(--hot-bg)">🔴</div>
+              <div><div class="mt1">Счётчик ГВС</div><div class="mt2">Горячее водоснабжение</div></div>
+            </div>
+            <div class="sum-divider"></div>
+            <div class="sum-row">
+              <span class="sl">Было</span>
+              <div class="sr"><span class="old">86,100</span><span class="arrow"> → </span><span class="new">87,640</span><span class="un">&nbsp;м³</span></div>
+            </div>
+            <div class="delta-chip">
+              <span class="di">→</span><span class="dv">+1,540</span><span class="dl">расход</span><span class="du">м³</span>
+            </div>
+            <div class="edit-btn"><span>✎</span><span>Исправить</span></div>
+          </div>
+        </div>
+        <!-- Electricity card -->
+        <div class="sum-card">
+          <div class="stripe" style="background:var(--elec)"></div>
+          <div class="body">
+            <div class="shd">
+              <div class="ico" style="background:var(--elec-bg)">⚡</div>
+              <div><div class="mt1">Электросчётчик</div><div class="mt2">Двухзонный · Т1 и Т2</div></div>
+            </div>
+            <div class="sum-divider"></div>
+            <div class="sum-row">
+              <span class="sl">Т1 было / стало</span>
+              <div class="sr"><span class="old">4217,5</span><span class="arrow"> → </span><span class="new">4228,1</span><span class="un">&nbsp;кВт·ч</span></div>
+            </div>
+            <div class="sum-row">
+              <span class="sl">Т2 было / стало</span>
+              <div class="sr"><span class="old">2103,2</span><span class="arrow"> → </span><span class="new">2114,0</span><span class="un">&nbsp;кВт·ч</span></div>
+            </div>
+            <div class="delta-chip">
+              <span class="di">→</span><span class="dv">+10,6</span><span class="dl">Т1</span>
+              <span style="font-size:13px;color:var(--txt3);padding:0 4px">+</span>
+              <span class="dv">+10,8</span><span class="dl">Т2</span><span class="du">кВт·ч</span>
+            </div>
+            <div class="edit-btn"><span>✎</span><span>Исправить</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Submit bar -->
+    <div class="sub-bar">
+      <div class="info-panel">
+        <div class="info-cell">
+          <div class="ii">🕐</div>
+          <div><div class="il">Дата передачи</div><div class="iv">27.05.2026, 09:41</div></div>
+        </div>
+        <div class="info-sep"></div>
+        <div class="info-cell">
+          <div class="ii">💳</div>
+          <div><div class="il">Лицевой счёт</div><div class="iv">470504175312</div></div>
+        </div>
+        <div class="info-sep"></div>
+        <div class="info-cell">
+          <div class="ii">📩</div>
+          <div><div class="il">После отправки</div><div class="iv">Придёт SMS-подтверждение</div></div>
+        </div>
+      </div>
+      <div class="sub-btn">
+        <span>✓</span><span>Передать показания</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  8. SUCCESS
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="s8">
+  <div class="screen-label">Успешная передача <span class="tag">SuccessScreen</span></div>
+  <div class="screen-desc">Зелёная иконка, карточка с деталями, оранжевая подсказка, таймер автовозврата (10 сек), кнопка «На главную».</div>
+  <div class="tablet-frame">
+    <div class="sb"><span>09:41</span><div class="r"><span>Wi-Fi</span><span>100%</span></div></div>
+    <div class="ca" style="background:var(--bg)">
+      <div class="success-wrap">
+        <div class="success-col">
+          <div class="chk-circle">✅</div>
+          <div class="suc-title">Показания приняты!</div>
+          <div class="suc-sub">Ваши показания успешно переданы в АО ЕИРЦ ЛО</div>
+          <div class="suc-card">
+            <div class="suc-row">
+              <div class="si">💳</div>
+              <span class="sl">Лицевой счёт</span>
+              <span class="sv">470504175312</span>
+            </div>
+            <div class="suc-divider"></div>
+            <div class="suc-row">
+              <div class="si">⚡</div>
+              <span class="sl">Передано показаний</span>
+              <span class="sv">3 шт.</span>
+            </div>
+            <div class="suc-divider"></div>
+            <div class="suc-row">
+              <div class="si">📅</div>
+              <span class="sl">Дата передачи</span>
+              <span class="sv">27.05.2026, 09:41</span>
+            </div>
+          </div>
+          <div class="tip-chip">
+            <span class="ti">ℹ️</span>
+            <p>Следующая передача — с 1 по 25 числа</p>
+          </div>
+          <div class="cd-wrap">
+            <p>Автопереход на главную через 7 сек.</p>
+            <div class="cd-bar"><div class="cd-fill" style="width:70%"></div></div>
+          </div>
+          <div class="home-btn">
+            <span>🏠</span><span>На главную</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  9. HELP
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="s9">
+  <div class="screen-label">Помощь <span class="tag">TabletHelpScreen</span></div>
+  <div class="screen-desc">Слева — 4 карточки способов передачи с оранжевым левым акцентом. Справа — период + важные уведомления.</div>
+  <div class="tablet-frame">
+    <div class="sb"><span>09:41</span><div class="r"><span>Wi-Fi</span><span>100%</span></div></div>
+    <div class="tb-wrap">
+      <div class="tb">
+        <div class="logo">🏢</div>
+        <div class="ttls">
+          <div class="t1">Помощь</div>
+          <div class="t2">Способы передачи показаний · ЕИРЦ ЛО</div>
+        </div>
+        <div class="trail">
+          <div class="back-btn">← На главную</div>
+        </div>
+      </div>
+      <div class="tb-line"></div>
+    </div>
+    <div class="ca">
+      <div class="help-wrap">
+        <!-- Left -->
+        <div class="hleft">
+          <h3>Способы передачи показаний</h3>
+          <p class="hs">Выберите удобный способ — данные поступят в ЕИРЦ ЛО</p>
+          <!-- Method 1 -->
+          <div class="mc">
+            <div class="bar"></div>
+            <div class="mc-body">
+              <div class="mi2" style="background:var(--primary-pale)">👤</div>
+              <div class="mcol">
+                <div class="mt">Личный кабинет клиента</div>
+                <div class="md">Зарегистрируйтесь и привяжите лицевой счёт — не более 5 минут</div>
+                <div class="tag">lk.epd47.ru</div>
+              </div>
+            </div>
+          </div>
+          <!-- Method 2 -->
+          <div class="mc">
+            <div class="bar"></div>
+            <div class="mc-body">
+              <div class="mi2" style="background:#E8F0FF">🌐</div>
+              <div class="mcol">
+                <div class="mt">Сервисы ВКонтакте</div>
+                <div class="md">«Передать показания» и «Мой дом онлайн» — вступите в сообщество</div>
+                <div class="tag">vk.com/eirclo</div>
+              </div>
+            </div>
+          </div>
+          <!-- Method 3 -->
+          <div class="mc">
+            <div class="bar"></div>
+            <div class="mc-body">
+              <div class="mi2" style="background:#F5F3FF">📞</div>
+              <div class="mcol">
+                <div class="mt">Автоматическая система приёма</div>
+                <div class="md">Круглосуточно, без ожидания оператора</div>
+                <div class="mpn">8 (812) 630-19-88</div>
+              </div>
+            </div>
+          </div>
+          <!-- Method 4 -->
+          <div class="mc">
+            <div class="bar"></div>
+            <div class="mc-body">
+              <div class="mi2" style="background:var(--primary-pale)">📲</div>
+              <div class="mcol">
+                <div class="mt">Колл-центр ЕИРЦ ЛО</div>
+                <div class="md">Пн–Ср 8:00–17:00 · Чт 8:00–19:00 · Пт 8:00–13:00</div>
+                <div class="mpn">8 (812) 630-20-10</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Right -->
+        <div class="hright">
+          <!-- Period strip -->
+          <div class="period-strip">
+            <div class="pi">📆</div>
+            <div>
+              <div class="eyebrow">РЕКОМЕНДУЕМЫЙ ПЕРИОД ПЕРЕДАЧИ</div>
+              <div class="val">1 – 25 число каждого месяца</div>
+              <div class="sub">Показания после 25-го не принимаются к расчётам текущего месяца</div>
+            </div>
+          </div>
+          <!-- Important notices -->
+          <div class="notice-card">
+            <div class="nh"><span>⚠</span><span class="nt">Важная информация</span></div>
+            <div class="nr">
+              <div class="nb" style="background:var(--success-pale)">✓</div>
+              <div>
+                <div class="nl">Передавайте даже если показания не изменились</div>
+                <div class="nd">Нулевой расход тоже нужно подтверждать каждый месяц</div>
+              </div>
+            </div>
+            <div class="nr-div"></div>
+            <div class="nr">
+              <div class="nb" style="background:var(--danger-pale)">⚠</div>
+              <div>
+                <div class="nl">После 25-го числа показания не принимаются в расчёт</div>
+                <div class="nd">За текущий месяц будет применён расчётный норматив</div>
+              </div>
+            </div>
+            <div class="nr-div"></div>
+            <div class="nr">
+              <div class="nb" style="background:var(--accent-soft)">ℹ</div>
+              <div>
+                <div class="nl">При отсутствии ИПУ холодной воды — коэффициент ×3</div>
+                <div class="nd">Постановление Правительства РФ № 1871 от 25.11.2025</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  10. VIDEO CALL — WAITING  (new feature)
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="s10">
+  <div class="screen-label">Видеозвонок — ожидание <span class="tag">VideoCall · connecting</span></div>
+  <div class="screen-desc">Новый функционал. Запускается с главной («Видеосвязь с оператором»). Тёмная navy-сцена, пульсирующие кольца, таймер ожидания, кнопка «Отменить». Превью своей камеры — в углу.</div>
+  <div class="tablet-frame">
+    <div class="sb"><span>09:41</span><div class="r"><span>Wi-Fi</span><span>100%</span></div></div>
+    <div class="tb-wrap">
+      <div class="tb">
+        <button class="back-btn">‹ Отмена</button>
+        <div class="ttls" style="margin-left:8px">
+          <div class="t1">Видеосвязь с оператором</div>
+          <div class="t2">Соединение по защищённому каналу</div>
+        </div>
+      </div>
+      <div class="tb-line"></div>
+    </div>
+    <div class="ca">
+      <div class="vc-stage">
+        <div class="vc-wait">
+          <div class="vc-pulse">
+            <span class="vc-ring"></span><span class="vc-ring d2"></span>
+            <span class="vc-core">📹</span>
+          </div>
+          <div>
+            <h1>Соединяем с оператором</h1>
+            <p>Пожалуйста, подождите. Это займёт меньше минуты.</p>
+          </div>
+          <span class="vc-badge"><span class="d"></span> Ожидание ответа · 00:12</span>
+        </div>
+        <div class="vc-self" style="bottom:150px;top:auto">👤<span class="lbl">Вы</span></div>
+        <div class="vc-cancel"><button class="vc-endbtn">📵 Отменить вызов</button></div>
+      </div>
+    </div>
+    <div class="footer">АО ЕИРЦ Ленинградской области · Видеосвязь работает в защищённой сети</div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  11. VIDEO CALL — IN CALL  (new feature)
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="s11">
+  <div class="screen-label">Видеозвонок — разговор <span class="tag">VideoCall · active</span></div>
+  <div class="screen-desc">Оператор на связи. Видео во весь экран, превью своей камеры в углу, статус «Идёт разговор» и таймер сверху, панель управления (микрофон / камера / завершить) снизу.</div>
+  <div class="tablet-frame">
+    <div class="sb"><span>09:41</span><div class="r"><span>Wi-Fi</span><span>100%</span></div></div>
+    <div class="ca">
+      <div class="vc-stage">
+        <div class="vc-remote">
+          <div class="vc-avatar">🧑‍💼</div>
+          <div class="nm">Оператор Анна Петрова</div>
+        </div>
+        <div class="vc-top">
+          <span class="live"><span class="d"></span> Идёт разговор</span>
+          <span class="tm">02:14</span>
+        </div>
+        <div class="vc-self">👤<span class="lbl">Вы</span></div>
+        <div class="vc-controls">
+          <div class="vc-ctrl"><button>🎙</button><span class="cl">Микрофон</span></div>
+          <div class="vc-ctrl"><button>📷</button><span class="cl">Камера</span></div>
+          <div class="vc-ctrl end"><button>📵</button><span class="cl">Завершить</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  12. OPERATOR WORKSTATION  (new feature — desktop surface)
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="s12">
+  <div class="screen-label">Рабочее место оператора <span class="tag">Operator · desktop</span></div>
+  <div class="screen-desc">Сопутствующая поверхность (десктоп оператора). Очередь вызовов слева, входящий вызов по центру: «Принять» (зелёная) / «Отклонить». Та же дизайн-система: navy-шапка, серифовые заголовки.</div>
+  <div class="op-frame">
+    <div class="op-winbar"><i></i><i></i><i></i><span class="ttl">ЕИРЦ ЛО — Оператор · приём видеозвонков</span></div>
+    <div class="op-body">
+      <aside class="op-side">
+        <div class="sh"><h3>Очередь вызовов</h3><span class="cnt">3</span></div>
+        <div class="op-q">
+          <div class="op-qi act"><div class="op-qn">1</div><div class="op-qm"><div class="k">Планшет №1</div><div class="l">Зал обслуживания, 1 этаж</div></div><div class="op-qw">входящий</div></div>
+          <div class="op-qi"><div class="op-qn">2</div><div class="op-qm"><div class="k">Планшет №3</div><div class="l">Окно приёма показаний</div></div><div class="op-qw">ждёт 0:48</div></div>
+          <div class="op-qi"><div class="op-qn">3</div><div class="op-qm"><div class="k">Планшет №2</div><div class="l">Зона самообслуживания</div></div><div class="op-qw">ждёт 1:15</div></div>
+        </div>
+      </aside>
+      <div class="op-main">
+        <div class="op-bar">
+          <div class="who">
+            <span class="av">👩‍💼</span>
+            <div><div class="nm">Анна Петрова</div><div class="rl">Оператор · смена 1</div></div>
+          </div>
+          <span class="st"><span class="d"></span> Готова принимать</span>
+        </div>
+        <div class="op-stage">
+          <div class="op-video">
+            <div class="op-vlabel"><div class="av">👤</div><span>Видео клиента</span></div>
+            <div class="op-pip">👩‍💼</div>
+            <div class="op-ovl">
+              <div class="op-dialog">
+                <div class="top">
+                  <div class="op-incav">📹<span class="op-incring"></span></div>
+                  <div class="h">Входящий видеозвонок</div>
+                  <div class="s1">Планшет №1</div>
+                  <div class="s2">Зал обслуживания, 1 этаж</div>
+                  <div class="more">Ещё 2 в очереди</div>
+                </div>
+                <div class="acts">
+                  <button class="rej">📵 Отклонить</button>
+                  <button class="acc">📞 Принять</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+  TOKENS
+════════════════════════════════════════════════════════════════════════ -->
+<section class="screen-section" id="tokens">
+  <div class="screen-label">Дизайн-токены <span class="tag">Brand DS Tokens</span></div>
+  <div class="screen-desc">Цвета, типографика и размеры, применённые в дизайн-системе.</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <!-- Color tokens -->
+    <div style="background:#1E293B;border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:14px;font-weight:700;color:#94A3B8;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Цвета</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <!-- Primary family -->
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:11px;font-weight:700;color:#475569;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px">Primary</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:36px;height:36px;border-radius:8px;background:#022A5C;flex-shrink:0"></div>
+            <div><div style="font-size:13px;font-weight:700;color:#CBD5E1">--primary-dk</div><div style="font-size:11px;color:#475569">#022A5C · StatusBar</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:36px;height:36px;border-radius:8px;background:#033D86;flex-shrink:0"></div>
+            <div><div style="font-size:13px;font-weight:700;color:#CBD5E1">--primary</div><div style="font-size:11px;color:#475569">#033D86 · TopBar, иконки</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:36px;height:36px;border-radius:8px;background:#CDD8EE;border:1px solid rgba(255,255,255,.1);flex-shrink:0"></div>
+            <div><div style="font-size:13px;font-weight:700;color:#CBD5E1">--primary-pale</div><div style="font-size:11px;color:#475569">#CDD8EE · фон</div></div>
+          </div>
+        </div>
+        <!-- Accent family -->
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:11px;font-weight:700;color:#475569;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px">Accent (CTA)</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:36px;height:36px;border-radius:8px;background:#B45309;flex-shrink:0"></div>
+            <div><div style="font-size:13px;font-weight:700;color:#CBD5E1">--accent</div><div style="font-size:11px;color:#475569">#B45309 · кнопки CTA</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:36px;height:36px;border-radius:8px;background:#92400E;flex-shrink:0"></div>
+            <div><div style="font-size:13px;font-weight:700;color:#CBD5E1">--accent-dk</div><div style="font-size:11px;color:#475569">#92400E · hover/текст</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:36px;height:36px;border-radius:8px;background:#FFF3DF;border:1px solid rgba(255,255,255,.1);flex-shrink:0"></div>
+            <div><div style="font-size:13px;font-weight:700;color:#CBD5E1">--accent-soft</div><div style="font-size:11px;color:#475569">#FFF3DF · фон акцента</div></div>
+          </div>
+        </div>
+        <!-- Neutral -->
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+          <div style="font-size:11px;font-weight:700;color:#475569;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px">Neutral</div>
+          <div style="display:flex;gap:6px">
+            <div style="text-align:center">
+              <div style="width:32px;height:32px;border-radius:6px;background:#111827"></div>
+              <div style="font-size:9px;color:#475569;margin-top:3px">txt1</div>
+            </div>
+            <div style="text-align:center">
+              <div style="width:32px;height:32px;border-radius:6px;background:#4B5563"></div>
+              <div style="font-size:9px;color:#475569;margin-top:3px">txt2</div>
+            </div>
+            <div style="text-align:center">
+              <div style="width:32px;height:32px;border-radius:6px;background:#9CA3AF"></div>
+              <div style="font-size:9px;color:#475569;margin-top:3px">txt3</div>
+            </div>
+            <div style="text-align:center">
+              <div style="width:32px;height:32px;border-radius:6px;background:#E5E7EB;border:1px solid #334155"></div>
+              <div style="font-size:9px;color:#475569;margin-top:3px">border</div>
+            </div>
+            <div style="text-align:center">
+              <div style="width:32px;height:32px;border-radius:6px;background:#F9FAFB;border:1px solid #334155"></div>
+              <div style="font-size:9px;color:#475569;margin-top:3px">bg</div>
+            </div>
+          </div>
+        </div>
+        <!-- Status -->
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+          <div style="font-size:11px;font-weight:700;color:#475569;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px">Status</div>
+          <div style="display:flex;gap:6px">
+            <div style="text-align:center">
+              <div style="width:32px;height:32px;border-radius:6px;background:#16A34A"></div>
+              <div style="font-size:9px;color:#475569;margin-top:3px">success</div>
+            </div>
+            <div style="text-align:center">
+              <div style="width:32px;height:32px;border-radius:6px;background:#B91C1C"></div>
+              <div style="font-size:9px;color:#475569;margin-top:3px">danger</div>
+            </div>
+            <div style="text-align:center">
+              <div style="width:32px;height:32px;border-radius:6px;background:#2A78B0"></div>
+              <div style="font-size:9px;color:#475569;margin-top:3px">cold</div>
+            </div>
+            <div style="text-align:center">
+              <div style="width:32px;height:32px;border-radius:6px;background:#C0402A"></div>
+              <div style="font-size:9px;color:#475569;margin-top:3px">hot</div>
+            </div>
+            <div style="text-align:center">
+              <div style="width:32px;height:32px;border-radius:6px;background:#2E7D32"></div>
+              <div style="font-size:9px;color:#475569;margin-top:3px">gas</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Typography + Sizes -->
+    <div style="background:#1E293B;border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:16px">
+      <div style="font-size:14px;font-weight:700;color:#94A3B8;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Типографика</div>
+      <div style="background:#0F172A;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px">
+        <div>
+          <div style="font-family:'Merriweather',serif;font-size:30px;font-weight:900;color:#E2E8F0;line-height:1.15">Добро пожаловать!</div>
+          <div style="font-size:11px;color:#475569;margin-top:3px">Merriweather Black 30px · DisplayLarge · h1 экрана</div>
+        </div>
+        <div>
+          <div style="font-family:'Merriweather',serif;font-size:24px;font-weight:700;color:#E2E8F0;line-height:1.2">Передача показаний</div>
+          <div style="font-size:11px;color:#475569;margin-top:3px">Merriweather Bold 24px · HeadingLarge · заголовок TopBar</div>
+        </div>
+        <div>
+          <div style="font-family:'Merriweather',serif;font-size:20px;font-weight:700;color:#E2E8F0;line-height:1.25">Счётчик ХВС</div>
+          <div style="font-size:11px;color:#475569;margin-top:3px">Merriweather Bold 20px · HeadingMedium · заголовок карточки</div>
+        </div>
+        <div>
+          <div style="font-family:'Open Sans',sans-serif;font-size:15px;font-weight:400;color:#CBD5E1;line-height:1.5">Введите показание с циферблата счётчика. Новое значение должно быть не меньше предыдущего.</div>
+          <div style="font-size:11px;color:#475569;margin-top:3px">Open Sans Regular 15px · BodyLarge · основной текст</div>
+        </div>
+        <div>
+          <div style="font-family:'Open Sans',sans-serif;font-size:15px;font-weight:600;color:#E2E8F0">Передать показания</div>
+          <div style="font-size:11px;color:#475569;margin-top:3px">Open Sans SemiBold 15px · LabelLarge · текст кнопок</div>
+        </div>
+        <div>
+          <div style="font-family:'Open Sans',sans-serif;font-size:12px;font-weight:600;color:#94A3B8;letter-spacing:.08em;text-transform:uppercase">НОВОЕ ПОКАЗАНИЕ</div>
+          <div style="font-size:11px;color:#475569;margin-top:3px">Open Sans SemiBold 12px ALL CAPS · LabelSmall · подписи</div>
+        </div>
+      </div>
+      <!-- Sizes -->
+      <div>
+        <div style="font-size:14px;font-weight:700;color:#94A3B8;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">Хром</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:200px;height:32px;background:var(--primary-dk);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.6)">Status Bar — 32dp</div>
+            <div style="font-size:11px;color:#475569">#022A5C · 32dp height</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:200px;height:4px;background:linear-gradient(90deg,transparent,rgba(180,83,9,.7),#B45309,rgba(180,83,9,.7),transparent);border-radius:2px;margin:2px 0"></div>
+            <div style="font-size:11px;color:#475569">Accent gradient line — 2dp</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:200px;height:52px;background:var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.7)">Top Bar — 78dp + 2dp line</div>
+            <div style="font-size:11px;color:#475569">#033D86 · итого 80dp</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// Active sidebar link on scroll
+const links = document.querySelectorAll('#sidebar a[href^="#"]');
+const sections = [];
+links.forEach(a => {
+  const id = a.getAttribute('href').slice(1);
+  const el = document.getElementById(id);
+  if (el) sections.push({ el, a });
+});
+function updateActive() {
+  let current = sections[0];
+  sections.forEach(s => {
+    if (s.el.getBoundingClientRect().top <= 80) current = s;
+  });
+  links.forEach(a => a.classList.remove('active'));
+  if (current) current.a.classList.add('active');
+}
+window.addEventListener('scroll', updateActive, { passive: true });
+updateActive();
+</script>
+</body>
+</html>

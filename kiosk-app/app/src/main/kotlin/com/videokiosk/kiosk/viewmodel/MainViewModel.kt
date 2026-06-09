@@ -26,10 +26,21 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     companion object {
         private const val TAG = "MainViewModel"
 
-        // Public STUN — works on any LAN without a TURN server
+        // STUN + TURN relay.
+        // The operator PC sits behind a Windows Firewall on the Public network profile,
+        // which blocks all inbound UDP. TURN relays all media via outbound connections on
+        // both sides, so the firewall never sees an unexpected inbound packet.
+        // TODO: replace openrelay.metered.ca with a private TURN server for production.
         private val ICE_SERVERS = listOf(
             PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer(),
-            PeerConnection.IceServer.builder("stun:stun1.l.google.com:19302").createIceServer()
+            PeerConnection.IceServer.builder("stun:stun1.l.google.com:19302").createIceServer(),
+            // Local TCP TURN relay running on the operator PC.
+            // Kiosk reaches it via ADB reverse tunnel: adb reverse tcp:3478 tcp:3478
+            // so 127.0.0.1:3478 on kiosk == operator's localhost:3478.
+            PeerConnection.IceServer.builder("turn:127.0.0.1:3478?transport=tcp")
+                .setUsername("user")
+                .setPassword("password")
+                .createIceServer()
         )
     }
 
@@ -156,6 +167,20 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             Log.i(TAG, "Call renderers attached")
         } else {
             Log.w(TAG, "attachCallRenderers: webRTCClient not yet initialized")
+        }
+    }
+
+    /** Toggle microphone mute on the active WebRTC session. */
+    fun toggleMute() {
+        if (::webRTCClient.isInitialized) {
+            webRTCClient.toggleMute()
+        }
+    }
+
+    /** Toggle camera on/off on the active WebRTC session. */
+    fun toggleCamera() {
+        if (::webRTCClient.isInitialized) {
+            webRTCClient.toggleCamera()
         }
     }
 

@@ -1,0 +1,39 @@
+<!-- @dsCard group="Components" viewport="700x230" name="Поля ввода" subtitle="Input — обычное, с префиксом, ошибка, disabled" -->
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--surface); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .f { display: flex; flex-direction: column; gap: var(--space-2); }
+  label { font: var(--type-label); color: var(--text-strong); }
+  .field { display: flex; align-items: center; gap: var(--space-2); height: 48px; padding: 0 var(--space-4); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-md); font: var(--type-body); color: var(--text-strong); }
+  .field .pfx { color: var(--text-muted); }
+  .field .ph { color: var(--text-muted); }
+  .field.focus { border-color: var(--border-focus); box-shadow: var(--focus-ring); }
+  .field.err { border-color: var(--action-danger); }
+  .field.dis { background: var(--surface-sunken); color: var(--text-muted); }
+  .hint { font: var(--type-caption); color: var(--text-muted); }
+  .errmsg { font: var(--type-caption); color: var(--tint-danger-fg); }
+</style></head>
+<body>
+  <div class="f">
+    <label>IP сигнального сервера</label>
+    <div class="field focus">192.168.1.100</div>
+    <span class="hint">Адрес сервера в локальной сети</span>
+  </div>
+  <div class="f">
+    <label>Адрес WebSocket</label>
+    <div class="field"><span class="pfx">wss://</span><span>192.168.1.100:8080</span></div>
+    <span class="hint">Протокол подключения</span>
+  </div>
+  <div class="f">
+    <label>Порт</label>
+    <div class="field err">80808</div>
+    <span class="errmsg">Недопустимый номер порта</span>
+  </div>
+  <div class="f">
+    <label>TURN-сервер</label>
+    <div class="field dis">не используется</div>
+    <span class="hint">Заполняется при включённом coturn</span>
+  </div>
+</body></html>

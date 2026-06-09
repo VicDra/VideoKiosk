@@ -1,0 +1,104 @@
+/* ============================================================
+   ЦВЕТА — Brand Design System (ЕИРЦ ЛО / CountersReader)
+   Канонические токены бренда. Navy = структура/бренд,
+   Orange = действия (CTA). Источник: фирменный дизайн экранов.
+   ============================================================ */
+:root {
+  /* ── Primary · фирменный navy ───────────────────────────── */
+  --primary:       #033D86;   /* TopBar, иконки, активные значения */
+  --primary-dk:    #022A5C;   /* StatusBar, hover */
+  --primary-md:    #1A52A0;   /* промежуточный */
+  --primary-pale:  #CDD8EE;   /* светлый фон, подложки */
+  --primary-dim:   rgba(3,61,134,.10);
+
+  /* ── Accent · orange (CTA) ──────────────────────────────── */
+  --accent:        #B45309;   /* кнопки CTA, акцентная линия */
+  --accent-dk:     #92400E;   /* hover / текст на soft */
+  --accent-soft:   #FFF3DF;   /* фон акцента, подсказки */
+
+  /* ── Нейтральная шкала ──────────────────────────────────── */
+  --bg:            #F9FAFB;   /* фон рабочей области */
+  --surface:       #FFFFFF;   /* карточки, панели */
+  --txt1:          #111827;   /* основной текст */
+  --txt2:          #4B5563;   /* вторичный текст */
+  --txt3:          #9CA3AF;   /* подписи, плейсхолдеры */
+  --border:        #E5E7EB;   /* рамки */
+  --divider:       #F3F4F6;   /* тонкие разделители */
+
+  /* ── Семантические ──────────────────────────────────────── */
+  --success:       #16A34A;
+  --success-pale:  #DCFCE7;
+  --success-txt:   #166534;
+  --danger:        #B91C1C;
+  --danger-pale:   #FEF2F2;
+  --warn-pale:     #FFFBEB;
+  --warn-txt:      #92400E;
+
+  /* ── Типы приборов учёта ────────────────────────────────── */
+  --cold:  #2A78B0;  --cold-bg:  #DBEEF8;   /* ХВС — холодная вода */
+  --hot:   #C0402A;  --hot-bg:   #FDE8E4;   /* ГВС — горячая вода */
+  --elec:  #B45309;  --elec-bg:  #FDF5DC;   /* электричество */
+  --gas:   #2E7D32;  --gas-bg:   #E8F5E9;   /* газ */
+
+  /* ── Прочее ─────────────────────────────────────────────── */
+  --vk:    #4C7CF4;
+  --purple:#7C3AED;
+
+  /* ── Кольцо фокуса (доступность) ────────────────────────── */
+  --focus-ring: 0 0 0 4px rgba(180, 83, 9, .32);
+
+  /* ========================================================
+     СОВМЕСТИМОСТЬ — алиасы прежней системы → бренд.
+     Позволяет ранее собранным компонентам работать без правок.
+     ======================================================== */
+  --bg-page:        var(--bg);
+  --bg-page-blue:   var(--primary-dk);
+  --surface-muted:  var(--bg);
+  --surface-sunken: var(--divider);
+
+  --text-strong:    var(--txt1);
+  --text-body:      var(--txt2);
+  --text-muted:     var(--txt3);
+  --text-on-brand:  #FFFFFF;
+  --text-on-dark:   #EAF1FF;
+  --text-link:      var(--primary);
+
+  --border-subtle:  var(--divider);
+  --border-strong:  #D1D6DF;
+  --border-focus:   var(--accent);
+
+  /* Действия: главный CTA — оранжевый */
+  --action-primary:        var(--accent);
+  --action-primary-hover:  var(--accent-dk);
+  --action-primary-active: var(--accent-dk);
+  --action-primary-soft:   var(--accent-soft);
+  --action-accept:         var(--success);
+  --action-accept-hover:   var(--success-txt);
+  --action-danger:         var(--danger);
+  --action-danger-hover:   #7F1313;
+
+  --status-online:   var(--success);
+  --status-busy:     var(--danger);
+  --status-waiting:  var(--accent);
+  --status-offline:  var(--txt3);
+
+  --tint-info-bg:     var(--primary-pale);
+  --tint-info-fg:     var(--primary);
+  --tint-success-bg:  var(--success-pale);
+  --tint-success-fg:  var(--success-txt);
+  --tint-danger-bg:   var(--danger-pale);
+  --tint-danger-fg:   var(--danger);
+  --tint-warning-bg:  var(--accent-soft);
+  --tint-warning-fg:  var(--accent-dk);
+
+  /* Прежние «синие» имена → navy бренда */
+  --blue-50:  #EAF1FB; --blue-100: var(--primary-pale); --blue-300: #6E92CB;
+  --blue-400: var(--primary-md); --blue-500: var(--primary); --blue-600: var(--primary);
+  --blue-700: var(--primary-dk); --blue-800: var(--primary-dk); --blue-900: var(--primary-dk);
+  --green-50: var(--success-pale); --green-500: var(--success); --green-600: var(--success-txt); --green-700: var(--success-txt);
+  --red-50: var(--danger-pale); --red-500: var(--danger); --red-600: #7F1313; --red-700: #7F1313;
+  --amber-50: var(--accent-soft); --amber-400: #DC9830; --amber-500: var(--accent); --amber-700: var(--accent-dk);
+  --gray-0: #fff; --gray-50: var(--bg); --gray-100: var(--divider); --gray-150: var(--divider);
+  --gray-200: var(--border); --gray-300: #D1D6DF; --gray-400: var(--txt3); --gray-500: var(--txt3);
+  --gray-600: var(--txt2); --gray-700: var(--txt2); --gray-800: var(--txt1); --gray-900: var(--txt1);
+}
